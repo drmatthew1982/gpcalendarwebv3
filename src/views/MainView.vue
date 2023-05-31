@@ -22,6 +22,7 @@ const active_name_change = (index:any)=>{
 function logout() {
     console.log("logout");
     localStorage.setItem('token','');
+    localStorage.setItem('uderid','');
     //router.push('/');
     window.location.href="/"
 }
