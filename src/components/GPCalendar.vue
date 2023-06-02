@@ -35,9 +35,9 @@ document.addEventListener('DOMContentLoaded', function() {
             //emit('eventClick',info.event.id);
         },
         events:[
-            {id:'111', title: 'event 1', start: '2023-05-04T10:00:00',end:'2023-05-04T12:00:00'},
-            {id:'222', title: 'event 2', start: '2023-05-04T11:00:00',end:'2023-05-04T12:30:00'},
-            {id:'333', title: 'event 3', start: '2023-05-04T11:00:00',end:'2023-05-04T12:30:00',assign:'matthew',editable:false,backgroundColor:'#555555'}
+            {id:'111', title: 'event 1', start: '2023-06-04T10:00:00',end:'2023-06-04T12:00:00'},
+            {id:'222', title: 'event 2', start: '2023-06-04T11:00:00',end:'2023-06-04T12:30:00'},
+            {id:'333', title: 'event 3', start: '2023-06-04T11:00:00',end:'2023-06-04T12:30:00',assign:'matthew',editable:false,backgroundColor:'#555555'}
         ]
     });
     calendar.render();

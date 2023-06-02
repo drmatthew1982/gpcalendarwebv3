@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
-
+import {defineProps, reactive, ref, toRefs, watch} from 'vue'
+let props = defineProps({
+    formShow: {
+        type: Boolean,
+        default: false,
+    },
+});
 // do not use same name with ref
 const form = reactive({
     name: '',
@@ -12,7 +17,12 @@ const form = reactive({
     resource: '',
     desc: '',
 })
-
+const refProps = toRefs(props)
+let formVisible = ref(props.formShow)
+watch(refProps.formShow, (val, old) => {
+    formVisible.value = val
+}, { deep: true })//监听修改本地
+const emit = defineEmits(['dialogClosed'])
 const onSubmit = () => {
     console.log('submit!')
 }

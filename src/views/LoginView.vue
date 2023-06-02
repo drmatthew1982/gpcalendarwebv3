@@ -114,11 +114,10 @@ export default {
         }
         // 方法
         // 登录
-        function login() {
-            console.log("login");
-           let params = new URLSearchParams();
-           params.append("username",form.loginname);
-           params.append("password",form.loginpassword);
+        function login() {console.log("login");
+            let params = new URLSearchParams();
+            params.append("username",form.loginname);
+            params.append("password",form.loginpassword);
             let obj = service.post('http://localhost:8080/logincheck',
                 params,
                 headers).then(response=> {
