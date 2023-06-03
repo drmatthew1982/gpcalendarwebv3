@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {reactive, ref, toRefs,watch, defineProps,watchEffect} from "vue";
+import type { FormInstance, FormRules } from 'element-plus'
 import service from "@/webservice";
 
 let props = defineProps({
@@ -10,6 +11,7 @@ let props = defineProps({
 });
 const refProps = toRefs(props)
 let dialogVisible = ref(props.dialogShow)
+
 watch(refProps.dialogShow, (val, old) => {
     dialogVisible.value = val
 }, { deep: true })//监听修改本地
@@ -20,44 +22,63 @@ const dialogClose = ()=> {
     emit('dialogClosed');
 }
 const formLabelWidth = '140px'
-const form = reactive({
-    name: '',
-    code: ''
+const ruleFormRef = ref<FormInstance>()
+const ruleForm = reactive({
+    name: undefined,
+    code: undefined
+})
+
+const rules = reactive<FormRules>({
+    name: [
+        {required: true, message: 'Please input Activity name', trigger: 'blur'}
+    ],
+    code: [
+        {required: true, message: 'Please input Activity code', trigger: 'blur'}
+    ]
 })
 const headers= {
     Accept: 'application/json;charset=UTF-8',
     'Content-Type': 'application/x-www-form-urlencoded'
 }
-const formSubmit = ()=> {
-    let organisation = {
-        org_name:form.name,
-        org_code:form.code,
-        created_user_id:localStorage.getItem('userid')
-    };
-    service.post('http://localhost:8080/createorg',
-        organisation,
-        headers).then(response=> {
-        console.log(response.data);
-        dialogVisible.value = false;
-        emit('dialogClosed');
+const formSubmit = async (formEl: FormInstance | undefined)=> {
+    console.log("submit: "+formEl);
+    if (!formEl) return
+    await formEl.validate((valid, fields) => {
+        console.log("valid: "+valid);
+        console.log("fields: "+fields);
+        if (valid) {
+            let organisation = {
+                org_name: ruleForm.name,
+                org_code: ruleForm.code,
+                created_user_id: localStorage.getItem('userid')
+            };
+            service.post('http://localhost:8080/createorg',
+                organisation,
+                headers).then(response => {
+                console.log(response.data);
+                dialogVisible.value = false;
+                emit('dialogClosed');
+            })
+        }
     })
 }
+
 </script>
 
 <template>
     <el-dialog v-model="dialogVisible" title="Create Organisation" tabindex="-1" :before-close="dialogClose">
-        <el-form :model="form">
-            <el-form-item label="Organisation name" :label-width="formLabelWidth">
-                <el-input v-model="form.name" autocomplete="off" />
+        <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules">
+            <el-form-item label="Organisation name" :label-width="formLabelWidth" prop="name">
+                <el-input v-model="ruleForm.name" autocomplete="off" />
             </el-form-item>
-            <el-form-item label="Organisation code" :label-width="formLabelWidth">
-                <el-input v-model="form.code" autocomplete="off" />
+            <el-form-item label="Organisation code" :label-width="formLabelWidth" prop="code">
+                <el-input v-model="ruleForm.code" autocomplete="off" />
             </el-form-item>
         </el-form>
         <template #footer>
           <span class="dialog-footer">
             <el-button @click="dialogClose">Cancel</el-button>
-            <el-button type="primary" @click="formSubmit">
+            <el-button type="primary" @click="formSubmit(ruleFormRef)">
               Confirm
             </el-button>
           </span>
