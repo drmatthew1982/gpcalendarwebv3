@@ -6,21 +6,20 @@
         <el-table-column prop="org_name" label="Name" width="120" />
         <el-table-column prop="org_code" label="Code" width="120" />
         <el-table-column>
-            <template #default>
-                <el-button link type="primary" size="small" @click="handleClick"
-                >Detail</el-button
-                >
-                <el-button link type="primary" size="small">Edit</el-button>
+            <template #default="scope">
+                <el-button link type="primary" size="small" @click="edit(scope)">Detail & Edit Name</el-button>
             </template>
         </el-table-column>
     </el-table>
     <CreateOrginsationDialog :dialogShow="dialogShow" @dialogClosed="dialogClosed"/>
+    <UpdateOrginsationDialog :dialogShow="editDialogShow" :editdata ="editdata" @editDialogClosed="editDialogClosed"/>
 </template>
 
 <script lang="ts" setup>
 
 import {onMounted, reactive, ref} from "vue";
 import CreateOrginsationDialog from '@/components/CreateOrginsationDialog.vue'
+import UpdateOrginsationDialog from '@/components/UpdateOrginsationDialog.vue'
 import service from "@/webservice";
 onMounted(()=> {
 //setup 是围绕beforeCreate和created生命周期钩子运行的，不需要显式地定义它们。在这些钩子中编写的任何代码都应该直接在 setup 函数中编写。
@@ -29,18 +28,27 @@ onMounted(()=> {
 })
 
 let dialogShow = ref(false);
+let editDialogShow = ref(false);
+
+let editdata =ref([]);
 let tableData = reactive({
     arr: []
 });
 const dialogClosed = ()=>{
-    console.log("dialogClosed");
     findData();
     dialogShow.value = false;
+    editdata =ref([]);
 }
-const handleClick = () => {
-    console.log('click');
+const edit = (scope) => {
+    editdata = scope.row;
+    console.log(editdata.id);
+    editDialogShow.value = true;
 }
-
+const editDialogClosed = ()=>{
+    console.log("editDialogClosed");
+    findData();
+    editDialogShow.value = false;
+}
 const showCreateForm = () => {
     console.log('click');
     dialogShow.value = true;
