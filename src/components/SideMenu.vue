@@ -33,14 +33,14 @@ const click = (value: any) => {
                         <el-icon><OfficeBuilding /></el-icon>
                         <span>Organization</span>
                     </template>
-                        <el-menu-item index="1-1" @click="click(1)">orgnization info</el-menu-item>
+                        <el-menu-item index="1-1" @click="click(1)">My Own Organisation</el-menu-item>
                         <el-menu-item index="1-2" @click="click(1)">Users</el-menu-item>
                     </el-sub-menu>
                 <el-menu-item index="2" @click="click(0)">
                     <el-icon><Calendar /></el-icon>
                     <span>My Calendar</span>
                 </el-menu-item>
-                <el-menu-item index="2">
+                <el-menu-item index="2" @click="click(2)">
                     <el-icon><User /></el-icon>
                     <span>My Client</span>
                 </el-menu-item>

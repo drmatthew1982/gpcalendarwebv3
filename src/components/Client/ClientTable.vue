@@ -18,8 +18,8 @@
 <script lang="ts" setup>
 
 import {onMounted, reactive, ref} from "vue";
-import CreateOrginsationDialog from '@/components/CreateOrginsationDialog.vue'
-import UpdateOrginsationDialog from '@/components/UpdateOrginsationDialog.vue'
+import CreateOrginsationDialog from '@/components/Organisation/CreateOrganisationDialog.vue';
+import UpdateOrginsationDialog from '@/components/Organisation/UpdateOrganisationDialog.vue';
 import service from "@/webservice";
 onMounted(()=> {
 //setup 是围绕beforeCreate和created生命周期钩子运行的，不需要显式地定义它们。在这些钩子中编写的任何代码都应该直接在 setup 函数中编写。
@@ -67,8 +67,5 @@ const findData =  ()=> {
         tableData.arr=response.data;
         console.log(tableData.arr);
     })
-
-
 }
-
 </script>
