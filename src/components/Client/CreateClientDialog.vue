@@ -93,7 +93,7 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
             </el-form-item>
             <el-form-item label="Gender" :label-width="formLabelWidth" prop="gender">
                 <el-radio-group v-model="ruleForm.gender" size="large">
-                    <el-radio-button label="0">Not select</el-radio-button>
+                    <el-radio-button label="0">Not selected</el-radio-button>
                     <el-radio-button label="1">Male</el-radio-button>
                     <el-radio-button label="2">Female</el-radio-button>
                     <el-radio-button label="3">Other</el-radio-button>

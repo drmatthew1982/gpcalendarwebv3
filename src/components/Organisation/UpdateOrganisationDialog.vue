@@ -20,8 +20,8 @@ watch(refProps.dialogShow, (val, old) => {
     dialogVisible.value = val
 }, { deep: true })//监听修改本地
 watch(refProps.editdata, (val, old) => {
-    form.name = val.org_name,
-    form.code = val.org_code
+    ruleform.name = val.org_name,
+    ruleform.code = val.org_code
     editdataId = val.id
 }, { deep: true })//监听修改本地
 const emit = defineEmits(['editDialogClosed'])
@@ -32,7 +32,7 @@ const dialogClose = ()=> {
 const formLabelWidth = '140px'
 
 const ruleFormRef = ref<FormInstance>()
-const form = reactive({
+const ruleform = reactive({
     name: undefined,
     code: undefined
 })
@@ -52,8 +52,8 @@ const headers= {
 const formSubmit = ()=> {
     console.log("====:"+editdata.id);
     let organisation = {
-        org_name:form.name,
-        org_code:form.code,
+        org_name:ruleform.name,
+        org_code:ruleform.code,
         modified_user_id:localStorage.getItem('userid'),
         id:editdataId
     };
@@ -69,12 +69,12 @@ const formSubmit = ()=> {
 
 <template>
     <el-dialog v-model="dialogVisible" title="Create Organisation" tabindex="-1" :before-close="dialogClose">
-        <el-form ref="ruleFormRef" :model="form" :rules="rules">
+        <el-form ref="ruleFormRef" :model="ruleform" :rules="rules">
             <el-form-item label="Organisation name" :label-width="formLabelWidth" prop="name">
-                <el-input v-model="form.name" autocomplete="off" />
+                <el-input v-model="ruleform.name" autocomplete="off" />
             </el-form-item>
-            <el-form-item label="Organisation code" :label-width="formLabelWidth" prop="code">
-                <el-input v-model="form.code" autocomplete="off" disabled />
+            <el-form-item label="ruleform code" :label-width="formLabelWidth" prop="code">
+                <el-input v-model="ruleform.code" autocomplete="off" disabled />
             </el-form-item>
         </el-form>
         <template #footer>

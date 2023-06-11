@@ -4,14 +4,14 @@
     </el-row>
     <el-table :data="tableData.arr" style="width: 100%">
         <el-table-column prop="firstname" label="First Name" width="120" />
-        <el-table-column prop="niddlename" label="Middle Name" width="120" />
+        <el-table-column prop="middlename" label="Middle Name" width="120" />
         <el-table-column prop="lastname" label="Last Name" width="120" />
-        <el-table-column prop="gender" label="Gender" width="120" />
+        <el-table-column prop="gender" label="Gender"  :formatter="genderformatter" width="120" />
         <el-table-column prop="birthday" label="Birthday" :formatter="dataformatter" width="120" />
         <el-table-column prop="client_id_no" label="Client No ID" width="120" />
         <el-table-column>
             <template #default="scope">
-                <el-button link type="primary" size="small" @click="edit(scope)">Detail & Edit Name</el-button>
+                <el-button link type="primary" size="small" @click="edit(scope)">Detail & Edit Client</el-button>
             </template>
         </el-table-column>
     </el-table>
@@ -49,6 +49,20 @@ const dataformatter = (row, column, cellValue, index)=>{
         }
     });
     return format
+}
+const genderformatter = (row, column, cellValue, index)=>{
+    if(cellValue==0){
+        return 'Not selected';
+    }
+    if(cellValue==1) {
+        return 'Male';
+    }
+    if(cellValue==2){
+        return 'Female';
+    }
+    if(cellValue==3){
+        return 'Other';
+    }
 }
 
 let dialogShow = ref(false);

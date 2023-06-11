@@ -20,8 +20,12 @@ watch(refProps.dialogShow, (val, old) => {
     dialogVisible.value = val
 }, { deep: true })//监听修改本地
 watch(refProps.editdata, (val, old) => {
-    form.name = val.org_name,
-    form.code = val.org_code
+    ruleForm.firstname = val.firstname,
+    ruleForm.middlename = val.middlename,
+    ruleForm.lastname = val.lastname,
+    ruleForm.birthday = val.birthday,
+    ruleForm.gender = val.gender,
+    ruleForm.client_id_no = val.client_id_no,
     editdataId = val.id
 }, { deep: true })//监听修改本地
 const emit = defineEmits(['editDialogClosed'])
@@ -32,17 +36,24 @@ const dialogClose = ()=> {
 const formLabelWidth = '140px'
 
 const ruleFormRef = ref<FormInstance>()
-const form = reactive({
-    name: undefined,
-    code: undefined
+const ruleForm = reactive({
+    firstname: undefined,
+    middlename: undefined,
+    lastname: undefined,
+    birthday: undefined,
+    gender: undefined,
+    client_id_no:undefined
 })
 
 const rules = reactive<FormRules>({
-    name: [
-        {required: true, message: 'Please input Activity name', trigger: 'blur'}
+    firstname: [
+        {required: true, message: 'Please input Activity first name', trigger: 'blur'}
     ],
-    code: [
-        {required: true, message: 'Please input Activity code', trigger: 'blur'}
+    lastname: [
+        {required: true, message: 'Please input Activity last name', trigger: 'blur'}
+    ],
+    client_id_no: [
+        {required: true, message: 'Please input Activity id', trigger: 'blur'}
     ]
 })
 const headers= {
@@ -51,14 +62,18 @@ const headers= {
 }
 const formSubmit = ()=> {
     console.log("====:"+editdata.id);
-    let organisation = {
-        org_name:form.name,
-        org_code:form.code,
-        modified_user_id:localStorage.getItem('userid'),
+    let client = {
+        firstname: ruleForm.firstname,
+        middlename: ruleForm.middlename,
+        lastname: ruleForm.lastname,
+        birthday:ruleForm.birthday,
+        gender: ruleForm.gender,
+        client_id_no:ruleForm.client_id_no,
+        created_user_id: localStorage.getItem('userid'),
         id:editdataId
     };
-    service.post('http://localhost:8080/updateorg',
-        organisation,
+    service.post('http://localhost:8080/updateclient',
+        client,
         headers).then(response=> {
         console.log(response.data);
         dialogVisible.value = false;
@@ -68,13 +83,30 @@ const formSubmit = ()=> {
 </script>
 
 <template>
-    <el-dialog v-model="dialogVisible" title="Create Organisation" tabindex="-1" :before-close="dialogClose">
-        <el-form ref="ruleFormRef" :model="form" :rules="rules">
-            <el-form-item label="Organisation name" :label-width="formLabelWidth" prop="name">
-                <el-input v-model="form.name" autocomplete="off" />
+    <el-dialog v-model="dialogVisible" title="Create Client" tabindex="-1" :before-close="dialogClose">
+        <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules">
+            <el-form-item label="First Name" :label-width="formLabelWidth" prop="firstname">
+                <el-input v-model="ruleForm.firstname" autocomplete="off" />
             </el-form-item>
-            <el-form-item label="Organisation code" :label-width="formLabelWidth" prop="code">
-                <el-input v-model="form.code" autocomplete="off" disabled />
+            <el-form-item label="Middle Name" :label-width="formLabelWidth" prop="middlename">
+                <el-input v-model="ruleForm.middlename" autocomplete="off" />
+            </el-form-item>
+            <el-form-item label="Last Name" :label-width="formLabelWidth" prop="lastname">
+                <el-input v-model="ruleForm.lastname" autocomplete="off" />
+            </el-form-item>
+            <el-form-item label="Birthday" :label-width="formLabelWidth" prop="birthday">
+                <el-date-picker v-model="ruleForm.birthday" type="date" value-format="YYYY-MM-DD" autocomplete="off" />
+            </el-form-item>
+            <el-form-item label="Gender" :label-width="formLabelWidth" prop="gender">
+                <el-radio-group v-model="ruleForm.gender" size="large">
+                    <el-radio-button label="0">Not selected</el-radio-button>
+                    <el-radio-button label="1">Male</el-radio-button>
+                    <el-radio-button label="2">Female</el-radio-button>
+                    <el-radio-button label="3">Other</el-radio-button>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="Client ID" :label-width="formLabelWidth" prop="client_id_no">
+                <el-input v-model="ruleForm.client_id_no" autocomplete="off" />
             </el-form-item>
         </el-form>
         <template #footer>

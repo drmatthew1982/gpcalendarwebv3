@@ -7,7 +7,7 @@
         <el-table-column prop="org_code" label="Code" width="120" />
         <el-table-column>
             <template #default="scope">
-                <el-button link type="primary" size="small" @click="edit(scope)">Detail & Edit Name</el-button>
+                <el-button link type="primary" size="small" @click="edit(scope)">Detail & Edit Org</el-button>
             </template>
         </el-table-column>
     </el-table>
