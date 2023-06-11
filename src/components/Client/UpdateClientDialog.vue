@@ -106,7 +106,7 @@ const formSubmit = ()=> {
                 </el-radio-group>
             </el-form-item>
             <el-form-item label="Client ID" :label-width="formLabelWidth" prop="client_id_no">
-                <el-input v-model="ruleForm.client_id_no" autocomplete="off" />
+                <el-input v-model="ruleForm.client_id_no" autocomplete="off" disabled/>
             </el-form-item>
         </el-form>
         <template #footer>
