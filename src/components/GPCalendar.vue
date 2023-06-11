@@ -5,7 +5,7 @@ import { Calendar } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import timeGridPlugin from '@fullcalendar/timegrid'
-import EventDialog from '@/components/EventDialog.vue'
+import EventDialog from '@/components/Event/UpdateEventDialog.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { Action } from 'element-plus'
 
@@ -29,6 +29,9 @@ document.addEventListener('DOMContentLoaded', function() {
             right: "dayGridMonth,timeGridWeek,timeGridDay"
         },
         editable: true,
+        dateClick: function(info) {
+            alert('clicked ' + info.dateStr);
+        },
         eventClick: function(info) {
             console.log(dialogShow.value);
             dialogShow.value=true;

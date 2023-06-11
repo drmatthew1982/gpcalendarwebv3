@@ -4,7 +4,7 @@ import {markRaw, reactive, ref, shallowRef} from 'vue'
 import SideMenu from "@/components/SideMenu.vue";
 import GPCalendar from "@/components/GPCalendar.vue";
 import OrganizationForm from "@/components/OrganizationForm.vue";
-import EventDialog from '@/components/EventDialog.vue';
+import EventDialog from '@/components/Event/UpdateEventDialog.vue';
 import { RouterLink, RouterView } from 'vue-router'
 const active_name = shallowRef(GPCalendar);
 
