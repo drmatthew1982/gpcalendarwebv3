@@ -58,7 +58,7 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
                 firstname: ruleForm.firstname,
                 middlename: ruleForm.middlename,
                 lastname: ruleForm.lastname,
-                birthday: ruleForm.birthday,
+                birthday:ruleForm.birthday,
                 gender: ruleForm.gender,
                 client_id_no:ruleForm.client_id_no,
                 created_user_id: localStorage.getItem('userid')
@@ -89,7 +89,7 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
                 <el-input v-model="ruleForm.lastname" autocomplete="off" />
             </el-form-item>
             <el-form-item label="Birthday" :label-width="formLabelWidth" prop="birthday">
-                <el-date-picker v-model="ruleForm.birthday" type="date" autocomplete="off" />
+                <el-date-picker v-model="ruleForm.birthday" type="date" value-format="YYYY-MM-DD" autocomplete="off" />
             </el-form-item>
             <el-form-item label="Gender" :label-width="formLabelWidth" prop="gender">
                 <el-radio-group v-model="ruleForm.gender" size="large">
