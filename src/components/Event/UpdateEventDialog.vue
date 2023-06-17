@@ -2,21 +2,22 @@
 import {reactive, ref, toRefs,watch, defineProps,watchEffect} from "vue";
 
 let props = defineProps({
-    dialogShow: {
+    updateDialogShow: {
         type: Boolean,
         default: false,
-    },
+    }
 });
 const refProps = toRefs(props)
-let dialogVisible = ref(props.dialogShow)
-watch(refProps.dialogShow, (val, old) => {
+let dialogVisible = ref(props.updateDialogShow)
+
+watch(refProps.updateDialogShow, (val, old) => {
     dialogVisible.value = val
 }, { deep: true })//监听修改本地
 const emit = defineEmits(['dialogClosed'])
 const dialogClose = ()=> {
-    console.log(dialogVisible.value);
+    //console.log(dialogVisible.value);
     dialogVisible.value=false;
-    console.log(dialogVisible.value);
+    //console.log(dialogVisible.value);
     emit('dialogClosed');
 }
 const formLabelWidth = '140px'
@@ -32,7 +33,7 @@ const form = reactive({
 </script>
 
 <template>
-    <el-dialog v-model="dialogVisible" title="Shipping address" tabindex="-1">
+    <el-dialog v-model="dialogVisible" title="Update Event" tabindex="-1" :before-close="dialogClose">
         <el-form :model="form">
             <el-form-item label="Event comment" :label-width="formLabelWidth" prop="eventcmt">
                 <el-input v-model="form.eventcmt" autocomplete="off" />
