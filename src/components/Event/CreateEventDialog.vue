@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import {reactive, ref, toRefs, watch, defineProps, watchEffect} from "vue";
+import {reactive, ref, toRefs, watch, defineProps, watchEffect, onMounted} from "vue";
 import SelectClientDialog from "@/components/Client/SelectClientDialog.vue";
-import UpdateEventDialog from "@/components/Event/UpdateEventDialog.vue";
+import SelectOrganisationDialog from "@/components/Organisation/SelectOrganisationDialog.vue";
+import {FormInstance, FormRules} from "element-plus";
+//import UpdateEventDialog from "@/components/Event/UpdateEventDialog.vue";
 
 let props = defineProps({
     createDialogShow: {
@@ -18,6 +20,7 @@ let dialogVisible = ref(props.createDialogShow)
 let selectedDate = ref(props.defaultDate)
 let selectClientDialogShow = ref(false);
 let selectOrgDialogShow = ref(false);
+let endtimeDisable = ref(true)
 watch(refProps.createDialogShow, (val, old) => {
     dialogVisible.value = val
 }, {deep: true})//监听修改本地
@@ -32,6 +35,7 @@ const dialogClose = () => {
     emit('dialogClosed');
 }
 const formLabelWidth = '140px'
+const ruleFormRef = ref<FormInstance>()
 const form = reactive({
     eventcmt: undefined,
     client_id: undefined,
@@ -44,9 +48,31 @@ const form = reactive({
     starttime: undefined,
     endtime: undefined,
     reportstatus: 0,
-    orgid: undefined,
-    orgname: undefined,
+    org_id: undefined,
+    org_code: undefined,
+    org_name: undefined,
     org_show_value: undefined
+})
+const rules = reactive<FormRules>({
+    eventcmt: [
+        {required: true, message: 'Please input Activity event comment', trigger: 'blur'}
+    ],
+    client_show_value: [
+        {required: true, message: 'Please select Activity client', trigger: 'blur'}
+    ],
+    org_show_value: [
+        {required: true, message: 'Please select Activity organisation', trigger: 'blur'}
+    ],
+    date: [
+        {required: true, message: 'Please choose Activity date', trigger: 'blur'}
+    ],
+    starttime: [
+        {required: true, message: 'Please choose Activity start time', trigger: 'blur'}
+    ],
+    endtime: [
+        {required: true, message: 'Please choose Activity end time', trigger: 'blur'}
+    ],
+
 })
 const openClientSelectionForm = () => {
     selectClientDialogShow.value = true;
@@ -72,15 +98,21 @@ const selectClientClosed = (param)=>{
     }
     selectClientDialogShow.value = false;
 }
+const selectOrganisationClosed = (param)=> {
+    form.org_id = param.id;
+    form.org_code = param.org_code;
+    form.org_name = param.org_name;
+    form.org_show_value = param.org_code+"-"+param.org_name;
+}
 </script>
 
 <template>
     <el-dialog v-model="dialogVisible" title="Create Event" tabindex="-1" :before-close="dialogClose" append-to-body>
-        <el-form :model="form">
+        <el-form ref="ruleFormRef" :model="form" :rules="rules">
             <el-form-item label="Event comment" :label-width="formLabelWidth" prop="eventcmt">
                 <el-input v-model="form.eventcmt" autocomplete="off"/>
             </el-form-item>
-            <el-form-item label="Select a client" :label-width="formLabelWidth" prop="client_id">
+            <el-form-item label="Select a client" :label-width="formLabelWidth" prop="client_show_value">
                 <el-col :span="11">
                     <el-input v-model="form.client_show_value" autocomplete="off" disabled/>
                 </el-col>
@@ -89,7 +121,7 @@ const selectClientClosed = (param)=>{
                     </el-button>
                 </el-col>
             </el-form-item>
-            <el-form-item label="Select a orgnization" :label-width="formLabelWidth" prop="client_id">
+            <el-form-item label="Select a orgnization" :label-width="formLabelWidth" prop="org_show_value">
                 <el-col :span="11">
                     <el-input v-model="form.org_show_value" autocomplete="off" disabled/>
                 </el-col>
@@ -102,10 +134,10 @@ const selectClientClosed = (param)=>{
                 <el-date-picker v-model="form.date" type="date" value-format="YYYY-MM-DD" autocomplete="off"/>
             </el-form-item>
             <el-form-item label="Start Time" :label-width="formLabelWidth" prop="starttime">
-                <el-time-picker v-model="form.starttime" autocomplete="off"/>
+                <el-time-select v-model="form.starttime" :max-time="form.endtime" start="00:00" step="00:30" end="23:30" autocomplete="off" onchange="startTimeChange()"/>
             </el-form-item>
             <el-form-item label="End Time" :label-width="formLabelWidth" prop="endtime">
-                <el-time-picker v-model="form.endtime" autocomplete="off"/>
+                <el-time-select v-model="form.endtime" :min-time="form.starttime" start="00:00"  step="00:30" end="23:30" autocomplete="off"/>
             </el-form-item>
             <el-form-item label="Ready for Report">
                 <el-switch v-model="form.reportstatus"/>
@@ -122,6 +154,7 @@ const selectClientClosed = (param)=>{
         </template>
     </el-dialog>
     <SelectClientDialog :selectClientDialogShow="selectClientDialogShow" @selectClientClosed="selectClientClosed"/>
+    <SelectOrganisationDialog :selectOrgDialogShow="selectOrgDialogShow" @selectOrganisationClosed="selectOrganisationClosed"/>
 </template>
 
 <style scoped>
