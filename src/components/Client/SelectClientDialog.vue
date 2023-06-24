@@ -15,11 +15,11 @@ let dialogVisible = ref(props.selectClientDialogShow)
 watch(refProps.selectClientDialogShow, (val, old) => {
     dialogVisible.value = val
 }, { deep: true })//监听修改本地
-const emit = defineEmits(['selectClientClosed'])
-const dialogClose = ()=> {
+const emit = defineEmits(['selectClientClosed','dialogClosed'])
+const dialogClosed = ()=> {
     dialogVisible.value=false;
     console.log('close');
-    emit('selectClientClosed');
+    emit('dialogClosed');
 }
 const selectDialogClose = (param)=> {
     dialogVisible.value=false;
@@ -27,16 +27,10 @@ const selectDialogClose = (param)=> {
     emit('selectClientClosed',param);
 }
 
-const headers= {
-    Accept: 'application/json;charset=UTF-8',
-    'Content-Type': 'application/x-www-form-urlencoded'
-}
-
-
 </script>
 
 <template>
-    <el-dialog v-model="dialogVisible" title="Select Client" tabindex="-1" :before-close="dialogClose">
+    <el-dialog v-model="dialogVisible" title="Select Client" tabindex="-1" :before-close="dialogClosed">
         <ClientSelectionTable @dialogClosed="selectDialogClose"/>
     </el-dialog>
 

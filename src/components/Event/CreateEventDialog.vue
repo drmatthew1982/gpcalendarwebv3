@@ -3,6 +3,7 @@ import {reactive, ref, toRefs, watch, defineProps, watchEffect, onMounted} from 
 import SelectClientDialog from "@/components/Client/SelectClientDialog.vue";
 import SelectOrganisationDialog from "@/components/Organisation/SelectOrganisationDialog.vue";
 import {FormInstance, FormRules} from "element-plus";
+import service from "@/webservice";
 //import UpdateEventDialog from "@/components/Event/UpdateEventDialog.vue";
 
 let props = defineProps({
@@ -11,8 +12,7 @@ let props = defineProps({
         default: false,
     },
     defaultDate: {
-        type: String,
-        default: false,
+        type: String
     },
 });
 const refProps = toRefs(props)
@@ -44,10 +44,10 @@ const form = reactive({
     client_last_name:undefined,
     client_id_no:undefined,
     client_show_value:undefined,
-    date: selectedDate,
-    starttime: undefined,
-    endtime: undefined,
-    reportstatus: 0,
+    eventdate:selectedDate,
+    startTimeStr : undefined,
+    endTimeStr: undefined,
+    reportStatus: 0,
     org_id: undefined,
     org_code: undefined,
     org_name: undefined,
@@ -63,19 +63,21 @@ const rules = reactive<FormRules>({
     org_show_value: [
         {required: true, message: 'Please select Activity organisation', trigger: 'blur'}
     ],
-    date: [
+    eventdate: [
         {required: true, message: 'Please choose Activity date', trigger: 'blur'}
     ],
-    starttime: [
+    startTime: [
         {required: true, message: 'Please choose Activity start time', trigger: 'blur'}
     ],
-    endtime: [
+    endTime: [
         {required: true, message: 'Please choose Activity end time', trigger: 'blur'}
     ],
 
 })
 const openClientSelectionForm = () => {
+    console.log(selectClientDialogShow.value);
     selectClientDialogShow.value = true;
+
 }
 const openOrgSelectionForm = () => {
     selectOrgDialogShow.value = true;
@@ -103,6 +105,54 @@ const selectOrganisationClosed = (param)=> {
     form.org_code = param.org_code;
     form.org_name = param.org_name;
     form.org_show_value = param.org_code+"-"+param.org_name;
+    selectOrgDialogShow.value = false;
+}
+const headers= {
+    Accept: 'application/json;charset=UTF-8',
+    'Content-Type': 'application/x-www-form-urlencoded'
+}
+const formSubmit = async (formEl: FormInstance | undefined)=> {
+    console.log("submit: "+formEl);
+    if (!formEl) return
+    await formEl.validate((valid, fields) => {
+        console.log("valid: "+valid);
+        console.log("fields: "+fields);
+        if (valid) {
+            let event = {
+                eventcmt: form.eventcmt,
+                client_id: form.client_id,
+                org_id: form.org_id,
+                createby:localStorage.getItem('userid'),
+                assigned_to: localStorage.getItem('userid'),
+                eventdate:form.eventdate,
+                startTimeStr:form.startTimeStr + ":00",
+                endTimeStr:form.endTimeStr + ":00",
+                reportStatus:form.reportStatus,
+                created_user_id: localStorage.getItem('userid')
+            };
+            service.post('http://localhost:8080/createevent',
+                event,
+                headers).then(response => {
+                console.log(response.data);
+                dialogVisible.value = false;
+                form.eventcmt = undefined;
+                form.client_id = undefined;
+                form.client_first_name = undefined;
+                form.client_middle_name = undefined;
+                form.client_last_name = undefined;
+                form.client_id_no = undefined;
+                form.client_show_value = undefined;
+                form.startTimeStr = undefined;
+                form.endTimeStr = undefined;
+                form.org_id = undefined;
+                form.org_code = undefined;
+                form.org_name = undefined;
+                form.org_show_value = undefined;
+                emit('dialogClosed');
+            })
+        }
+    })
+
 }
 </script>
 
@@ -130,31 +180,31 @@ const selectOrganisationClosed = (param)=> {
                     </el-button>
                 </el-col>
             </el-form-item>
-            <el-form-item label="Date" :label-width="formLabelWidth" prop="date">
-                <el-date-picker v-model="form.date" type="date" value-format="YYYY-MM-DD" autocomplete="off"/>
+            <el-form-item label="Date" :label-width="formLabelWidth" prop="eventdate">
+                <el-date-picker v-model="form.eventdate" type="date" value-format="YYYY-MM-DD" autocomplete="off"/>
             </el-form-item>
-            <el-form-item label="Start Time" :label-width="formLabelWidth" prop="starttime">
-                <el-time-select v-model="form.starttime" :max-time="form.endtime" start="00:00" step="00:30" end="23:30" autocomplete="off" onchange="startTimeChange()"/>
+            <el-form-item label="Start Time" :label-width="formLabelWidth" prop="startTimeStr">
+                <el-time-select v-model="form.startTimeStr" :max-time="form.endTimeStr" start="00:00" step="00:30" end="23:30" autocomplete="off" onchange="startTimeChange()"/>
             </el-form-item>
-            <el-form-item label="End Time" :label-width="formLabelWidth" prop="endtime">
-                <el-time-select v-model="form.endtime" :min-time="form.starttime" start="00:00"  step="00:30" end="23:30" autocomplete="off"/>
+            <el-form-item label="End Time" :label-width="formLabelWidth" prop="endTimeStr">
+                <el-time-select v-model="form.endTimeStr" :min-time="form.startTimeStr" start="00:00"  step="00:30" end="23:30" autocomplete="off"/>
             </el-form-item>
-            <el-form-item label="Ready for Report">
-                <el-switch v-model="form.reportstatus"/>
+            <el-form-item label="Ready for Report" prop="reportStatus">
+                <el-switch v-model="form.reportStatus" inactive-value="0" active-value="1"/>
             </el-form-item>
 
         </el-form>
         <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogClose">Cancel</el-button>
-        <el-button type="primary" @click="dialogClose">
-          Confirm
+        <el-button type="primary" @click="formSubmit(ruleFormRef)">
+          Create
         </el-button>
       </span>
         </template>
     </el-dialog>
-    <SelectClientDialog :selectClientDialogShow="selectClientDialogShow" @selectClientClosed="selectClientClosed"/>
-    <SelectOrganisationDialog :selectOrgDialogShow="selectOrgDialogShow" @selectOrganisationClosed="selectOrganisationClosed"/>
+    <SelectClientDialog :selectClientDialogShow="selectClientDialogShow" @selectClientClosed="selectClientClosed" @dialogClosed="dialogClosed"/>
+    <SelectOrganisationDialog :selectOrgDialogShow="selectOrgDialogShow" @selectOrganisationClosed="selectOrganisationClosed" @dialogClosed="dialogClosed"/>
 </template>
 
 <style scoped>
