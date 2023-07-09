@@ -21,7 +21,24 @@ let editdata = ref();
 // calendar.addEventListener('prev', function() {
 //     console.log("prev click");
 // });
-
+const eventUpdate = (eventUpdateInfo) =>{
+    let newEvent = eventUpdateInfo.event;
+    let event = {
+        id: newEvent.id,
+        eventcmt: newEvent.extendedProps.eventcmt,
+        client_id: newEvent.extendedProps.client_id,
+        org_id: newEvent.extendedProps.org_id,
+        eventdate:newEvent.startStr.split('T')[0],
+        eventEndDate:newEvent.endStr.split('T')[0],
+        startTimeStr:newEvent.startStr.split('T')[1].split('+')[0],
+        endTimeStr:newEvent.endStr.split('T')[1].split('+')[0],
+        reportStatus:newEvent.extendedProps.reportStatus,
+        modified_user_id: localStorage.getItem('userid')
+    };
+    service.post('http://localhost:8080/updateevent',
+        event,
+        headers)
+}
 let events=[];
 document.addEventListener('DOMContentLoaded', function() {
     let calendarEl:HTMLElement = document.getElementById('calendar')!;
@@ -66,12 +83,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         },
         eventClick: function(info) {
-            console.log(info.event);
             updateDialogShow.value=true;
             editdata=info.event;
             //emit('eventClick',info.event.id);
         },
-
+        eventDrop: function(eventDropInfo) {
+            eventUpdate(eventDropInfo);
+        },
+        eventResize: function(eventResizeInfo) {
+            eventUpdate(eventResizeInfo);
+         },
         // events:
         //     [
         //     {id:'111', title: 'event 1', start: '2023-06-04T10:00:00',end:'2023-06-04T12:00:00'},
