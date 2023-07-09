@@ -26,7 +26,7 @@ watch(refProps.editdata, (val, old) => {
     ruleForm.birthday = val.birthday,
     ruleForm.gender = val.gender,
     ruleForm.client_id_no = val.client_id_no,
-    editdataId = val.id
+    ruleForm.id = val.id
 }, { deep: true })//监听修改本地
 const emit = defineEmits(['editDialogClosed'])
 const dialogClose = ()=> {
@@ -37,6 +37,7 @@ const formLabelWidth = '140px'
 
 const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive({
+    id:undefined,
     firstname: undefined,
     middlename: undefined,
     lastname: undefined,
@@ -70,9 +71,9 @@ const formSubmit = ()=> {
         gender: ruleForm.gender,
         client_id_no:ruleForm.client_id_no,
         created_user_id: localStorage.getItem('userid'),
-        id:editdataId
+        id:ruleForm.id
     };
-    service.post('http://localhost:8080/updateclient',
+    service.post('http://localhost:8080/updateevent',
         client,
         headers).then(response=> {
         console.log(response.data);
@@ -113,7 +114,7 @@ const formSubmit = ()=> {
           <span class="dialog-footer">
             <el-button @click="dialogClose">Cancel</el-button>
             <el-button type="primary" @click="formSubmit(ruleFormRef)">
-              Confirm
+              Update
             </el-button>
           </span>
         </template>

@@ -9,6 +9,7 @@ import UpdateEventDialog from '@/components/Event/UpdateEventDialog.vue'
 import CreateEventDialog from '@/components/Event/CreateEventDialog.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { Action } from 'element-plus'
+import momentTimezonePlugin from '@fullcalendar/moment-timezone'
 import service from "@/webservice";
 
 
@@ -16,6 +17,10 @@ let updateDialogShow = ref(false);
 let createDialogShow = ref(false);
 let defaultDate = ref();
 let calendar = ref();
+let editdata = ref();
+// calendar.addEventListener('prev', function() {
+//     console.log("prev click");
+// });
 const dialogClosed = ()=>{
     console.log("dialogClosed");
     updateDialogShow.value = false;
@@ -28,9 +33,52 @@ document.addEventListener('DOMContentLoaded', function() {
     //console.log(document.getElementById('333'));
     calendar = new Calendar(calendarEl, {
         plugins: [ dayGridPlugin,timeGridPlugin,interactionPlugin ],
+        //timeZone: 'Pacific/Auckland',
         initialView: 'dayGridMonth',
+        customButtons: {
+            prev: {
+                click: function() {
+                    calendar.prev();
+                    findEvent(calendar.view.currentEnd.toISOString(),calendar);
+                }
+            },
+            next: {
+                click: function() {
+                    calendar.next();
+                    findEvent(calendar.view.currentEnd.toISOString(),calendar);
+                }
+            },
+            today: {
+                text: 'Today',
+                click: function() {
+                    calendar.today();
+                    findEvent(calendar.view.currentEnd.toISOString(),calendar);
+                }
+            },
+            dayGridMonth: {
+                text: 'Month',
+                click: function() {
+                    calendar.changeView('dayGridMonth');
+                    findEvent(calendar.view.currentEnd.toISOString(),calendar);
+                }
+            },
+            timeGridWeek: {
+                text: 'Week',
+                click: function() {
+                    calendar.changeView('timeGridWeek');
+                    findEvent(calendar.view.currentEnd.toISOString(),calendar);
+                }
+            },
+            timeGridDay: {
+                text: 'Day',
+                click: function() {
+                    calendar.changeView('timeGridDay');
+                    findEvent(calendar.view.currentEnd.toISOString(),calendar);
+                }
+            },
+        },
         headerToolbar: {
-            left: 'prev,next',
+            left: 'prev,next,today',
             center: 'title',
             right: "dayGridMonth,timeGridWeek,timeGridDay"
         },
@@ -43,10 +91,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         },
         eventClick: function(info) {
-            console.log(updateDialogShow.value);
+            console.log(info.event);
             updateDialogShow.value=true;
+            editdata=info.event;
             //emit('eventClick',info.event.id);
-        }
+        },
+
         // events:
         //     [
         //     {id:'111', title: 'event 1', start: '2023-06-04T10:00:00',end:'2023-06-04T12:00:00'},
@@ -56,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     console.log(calendar.view.currentStart);
-    //calendar.addEventSource(events);
+    calendar.addEventSource(events);
     findEvent(calendar.view.currentEnd.toISOString(),calendar);
     calendar.render();
     console.log(calendar.getEvents());
@@ -96,7 +146,7 @@ const findEvent = (current_date,calendar) => {
 
         </div>
         <CreateEventDialog :createDialogShow="createDialogShow" :defaultDate="defaultDate" @dialogClosed="dialogClosed"/>
-        <UpdateEventDialog :updateDialogShow="updateDialogShow" @dialogClosed="dialogClosed"/>
+        <UpdateEventDialog :updateDialogShow="updateDialogShow" :editdata ="editdata" @dialogClosed="dialogClosed"/>
     </div>
 </template>
 
