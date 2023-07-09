@@ -16,22 +16,18 @@ import service from "@/webservice";
 let updateDialogShow = ref(false);
 let createDialogShow = ref(false);
 let defaultDate = ref();
-let calendar = ref();
+let calendar= ref(Calendar);
 let editdata = ref();
 // calendar.addEventListener('prev', function() {
 //     console.log("prev click");
 // });
-const dialogClosed = ()=>{
-    console.log("dialogClosed");
-    updateDialogShow.value = false;
-    createDialogShow.value = false;
-    findEvent(calendar.view.currentEnd.toISOString(),calendar);
-}
+
 let events=[];
 document.addEventListener('DOMContentLoaded', function() {
     let calendarEl:HTMLElement = document.getElementById('calendar')!;
     //console.log(document.getElementById('333'));
-    calendar = new Calendar(calendarEl, {
+    //let
+        calendar = new Calendar(calendarEl, {
         plugins: [ dayGridPlugin,timeGridPlugin,interactionPlugin ],
         //timeZone: 'Pacific/Auckland',
         initialView: 'dayGridMonth',
@@ -54,33 +50,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     calendar.today();
                     findEvent(calendar.view.currentEnd.toISOString(),calendar);
                 }
-            },
-            dayGridMonth: {
-                text: 'Month',
-                click: function() {
-                    calendar.changeView('dayGridMonth');
-                    findEvent(calendar.view.currentEnd.toISOString(),calendar);
-                }
-            },
-            timeGridWeek: {
-                text: 'Week',
-                click: function() {
-                    calendar.changeView('timeGridWeek');
-                    findEvent(calendar.view.currentEnd.toISOString(),calendar);
-                }
-            },
-            timeGridDay: {
-                text: 'Day',
-                click: function() {
-                    calendar.changeView('timeGridDay');
-                    findEvent(calendar.view.currentEnd.toISOString(),calendar);
-                }
-            },
+            }
         },
         headerToolbar: {
             left: 'prev,next,today',
             center: 'title',
-            right: "dayGridMonth,timeGridWeek,timeGridDay"
+            right: "dayGridMonth,timeGridWeek,timeGridDay",
         },
         editable: true,
         dateClick: function(info) {
@@ -111,7 +86,12 @@ document.addEventListener('DOMContentLoaded', function() {
     calendar.render();
     console.log(calendar.getEvents());
 });
-
+const dialogClosed = ()=>{
+    console.log("dialogClosed");
+    updateDialogShow.value = false;
+    createDialogShow.value = false;
+    findEvent(calendar.view.currentEnd.toISOString(),calendar);
+}
 const headers = {
     Accept: 'application/json;charset=UTF-8',
     'Content-Type': 'application/x-www-form-urlencoded'

@@ -4,6 +4,7 @@ import SelectClientDialog from "@/components/Client/SelectClientDialog.vue";
 import SelectOrganisationDialog from "@/components/Organisation/SelectOrganisationDialog.vue";
 import {FormInstance, FormRules} from "element-plus";
 import service from "@/webservice";
+import moment from 'moment'
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 //import UpdateEventDialog from "@/components/Event/UpdateEventDialog.vue";
 
@@ -27,7 +28,7 @@ watch(refProps.updateDialogShow, (val, old) => {
 }, {deep: true})//监听修改本地
 watch(refProps.editdata, (val, old) => {
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-    console.log(new Date(val.extendedProps.eventdate).toLocaleDateString('local',options).replaceAll("/","-"));
+    console.log(moment(String(new Date(val.extendedProps.eventdate))).format('yyyy-MM-DD'));
     form.id = val.id,
     form.eventcmt =  val.extendedProps.eventcmt,
     form.client_id=  val.extendedProps.client_id,
@@ -35,7 +36,9 @@ watch(refProps.editdata, (val, old) => {
     form.client_middle_name = val.extendedProps.middlename,
     form.client_last_name = val.extendedProps.lastname,
     form.client_id_no = val.extendedProps.client_id_no,
-    form.eventdate = new Date(val.extendedProps.eventdate).toLocaleDateString('local',options).replaceAll("/","-"),
+    form.eventdate = moment(String(new Date(val.extendedProps.eventdate))).format('yyyy-MM-DD'),
+    form.eventEndDate = moment(String(new Date(val.extendedProps.eventEndDate))).format('yyyy-MM-DD'),
+    form.sameDayEvent = (form.eventdate == form.eventEndDate),
     form.startTimeStr = val.extendedProps.startTimeStr.substring(0,5),
     form.endTimeStr = val.extendedProps.endTimeStr.substring(0,5),
     form.reportStatus = val.extendedProps.reportStatus,
@@ -68,6 +71,8 @@ const form = reactive({
     client_id_no:undefined,
     client_show_value:undefined,
     eventdate:undefined,
+    eventEndDate:undefined,
+    sameDayEvent:true,
     startTimeStr : undefined,
     endTimeStr: undefined,
     reportStatus: 0,
@@ -89,10 +94,10 @@ const rules = reactive<FormRules>({
     eventdate: [
         {required: true, message: 'Please choose Activity date', trigger: 'blur'}
     ],
-    startTime: [
+    startTimeStr: [
         {required: true, message: 'Please choose Activity start time', trigger: 'blur'}
     ],
-    endTime: [
+    endTimeStr: [
         {required: true, message: 'Please choose Activity end time', trigger: 'blur'}
     ],
 
@@ -134,6 +139,36 @@ const headers= {
     Accept: 'application/json;charset=UTF-8',
     'Content-Type': 'application/x-www-form-urlencoded'
 }
+const getStartDisableDate =(date)=>{
+    if(!form.sameDayEvent){
+        return date>new Date(form.eventEndDate);
+    }
+}
+const getEndDisableDate =(date)=>{
+    if(!form.sameDayEvent){
+        return date<new Date(form.eventdate);
+    }
+}
+const startDateChange =()=>{
+    if(form.sameDayEvent) {
+        form.eventEndDate = form.eventdate
+        console.log(form.eventEndDate);
+    }else{
+        if(new Date(form.eventEndDate)< new Date(form.eventdate)){
+            form.eventEndDate = form.eventdate
+        }
+    }
+}
+const getMaxEndTime =()=>{
+    if(form.sameDayEvent || (form.eventEndDate == form.eventdate)){
+        return form.endTimeStr;
+    }
+}
+const getMinStartTime =()=>{
+    if(form.sameDayEvent|| (form.eventEndDate == form.eventdate)){
+        return form.startTimeStr;
+    }
+}
 const formSubmit = async (formEl: FormInstance | undefined)=> {
     console.log("submit: "+formEl);
     if (!formEl) return
@@ -149,6 +184,7 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
                 createby:localStorage.getItem('userid'),
                 assigned_to: localStorage.getItem('userid'),
                 eventdate:form.eventdate,
+                eventEndDate:form.eventEndDate,
                 startTimeStr:form.startTimeStr + ":00",
                 endTimeStr:form.endTimeStr + ":00",
                 reportStatus:form.reportStatus,
@@ -204,14 +240,22 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
                     </el-button>
                 </el-col>
             </el-form-item>
-            <el-form-item label="Date" :label-width="formLabelWidth" prop="eventdate">
-                <el-date-picker v-model="form.eventdate" type="date" value-format="YYYY-MM-DD" autocomplete="off"/>
+            <el-form-item label="Start Date" :label-width="formLabelWidth" prop="eventdate">
+                <el-date-picker v-model="form.eventdate" type="date" value-format="YYYY-MM-DD" autocomplete="off" :clearable="false" :disabled-date="getStartDisableDate" @change="startDateChange()" />
+            </el-form-item>
+            <el-form-item label="End Date" :label-width="formLabelWidth" prop="eventEndDate">
+                <el-col :span="8">
+                    <el-date-picker v-model="form.eventEndDate" type="date" value-format="YYYY-MM-DD" autocomplete="off" :clearable="false" :disabled-date="getEndDisableDate" :disabled="form.sameDayEvent"/>
+                </el-col>
+                <el-col :span="5">
+                    <el-checkbox v-model="form.sameDayEvent" label="Same as Start Date" />
+                </el-col>
             </el-form-item>
             <el-form-item label="Start Time" :label-width="formLabelWidth" prop="startTimeStr">
-                <el-time-select v-model="form.startTimeStr" :max-time="form.endTimeStr" start="00:00" step="00:30" end="23:30" autocomplete="off" onchange="startTimeChange()"/>
+                <el-time-select v-model="form.startTimeStr" :max-time="getMaxEndTime()" start="00:00" step="00:30" end="23:30" autocomplete="off" onchange="startTimeChange()"/>
             </el-form-item>
             <el-form-item label="End Time" :label-width="formLabelWidth" prop="endTimeStr">
-                <el-time-select v-model="form.endTimeStr" :min-time="form.startTimeStr" start="00:00"  step="00:30" end="23:30" autocomplete="off"/>
+                <el-time-select v-model="form.endTimeStr" :min-time="getMinStartTime()" start="00:00"  step="00:30" end="23:30" autocomplete="off"/>
             </el-form-item>
             <el-form-item label="Ready for Report" prop="reportStatus">
                 <el-switch v-model="form.reportStatus" inactive-value="0" active-value="1"/>

@@ -15,6 +15,7 @@
     "@fullcalendar/daygrid": "^6.1.8",
     "@fullcalendar/interaction": "^6.1.6",
     "@fullcalendar/moment-timezone": "^6.1.8",
+    "@fullcalendar/timegrid": "^6.1.8",
     "@fullcalendar/vue3": "^6.1.6",
     "axios": "^1.4.0",
     "element-plus": "^2.3.4",
