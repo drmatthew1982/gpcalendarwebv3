@@ -5,6 +5,7 @@ import SelectOrganisationDialog from "@/components/Organisation/SelectOrganisati
 import {FormInstance, FormRules} from "element-plus";
 import service from "@/webservice";
 import moment from 'moment'
+import CreateMedicalRecordDialog from "@/components/MedicalRecord/CreateMedicalRecordDialog.vue";
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 //import UpdateEventDialog from "@/components/Event/UpdateEventDialog.vue";
 
@@ -22,6 +23,7 @@ let dialogVisible = ref(props.updateDialogShow)
 let selectedDate = ref(props.defaultDate)
 let selectClientDialogShow = ref(false);
 let selectOrgDialogShow = ref(false);
+let medicalRecordShow = ref(false);
 let endtimeDisable = ref(true)
 watch(refProps.updateDialogShow, (val, old) => {
     dialogVisible.value = val
@@ -94,6 +96,9 @@ const rules = reactive<FormRules>({
     eventdate: [
         {required: true, message: 'Please choose Activity date', trigger: 'blur'}
     ],
+    eventEndDate: [
+        {required: true, message: 'Please choose Activity date', trigger: 'blur'}
+    ],
     startTimeStr: [
         {required: true, message: 'Please choose Activity start time', trigger: 'blur'}
     ],
@@ -103,17 +108,19 @@ const rules = reactive<FormRules>({
 
 })
 const openClientSelectionForm = () => {
-    console.log(selectClientDialogShow.value);
     selectClientDialogShow.value = true;
-
 }
 const openOrgSelectionForm = () => {
     selectOrgDialogShow.value = true;
+}
+const  openMedicalRecord= () => {
+    medicalRecordShow.value = true;
 }
 const dialogClosed = ()=>{
     console.log("dialogClosed in Create Event Dialog");
     selectClientDialogShow.value = false;
     selectOrgDialogShow.value = false;
+    medicalRecordShow.value = false;
 }
 const selectClientClosed = (param)=>{
     form.client_id = param.id;
@@ -252,10 +259,10 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
                 <el-date-picker v-model="form.eventdate" type="date" value-format="YYYY-MM-DD" autocomplete="off" :clearable="false" :disabled-date="getStartDisableDate" @change="startDateChange()" />
             </el-form-item>
             <el-form-item label="End Date" :label-width="formLabelWidth" prop="eventEndDate">
-                <el-col :span="8">
+                <el-col>
                     <el-date-picker v-model="form.eventEndDate" type="date" value-format="YYYY-MM-DD" autocomplete="off" :clearable="false" :disabled-date="getEndDisableDate" :disabled="form.sameDayEvent"/>
                 </el-col>
-                <el-col :span="5">
+                <el-col>
                     <el-checkbox v-model="form.sameDayEvent" label="Same as Start Date" @change="sameDayEventChange"/>
                 </el-col>
             </el-form-item>
@@ -268,7 +275,10 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
             <el-form-item label="Ready for Report" prop="reportStatus">
                 <el-switch v-model="form.reportStatus" inactive-value="0" active-value="1"/>
             </el-form-item>
-
+            <el-form-item label="Medical Record" >
+                <el-button link type="primary" size="small" @click="openMedicalRecord()">Open Medical Record
+                </el-button>
+            </el-form-item>
         </el-form>
         <template #footer>
       <span class="dialog-footer">
@@ -279,6 +289,7 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
       </span>
         </template>
     </el-dialog>
+    <CreateMedicalRecordDialog :medicalRecordShow="medicalRecordShow"/>
     <SelectClientDialog :selectClientDialogShow="selectClientDialogShow" @selectClientClosed="selectClientClosed" @dialogClosed="dialogClosed"/>
     <SelectOrganisationDialog :selectOrgDialogShow="selectOrgDialogShow" @selectOrganisationClosed="selectOrganisationClosed" @dialogClosed="dialogClosed"/>
 </template>

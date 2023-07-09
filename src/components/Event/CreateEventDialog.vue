@@ -231,10 +231,10 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
                 <el-date-picker v-model="form.eventdate" type="date" value-format="YYYY-MM-DD" autocomplete="off" :clearable="false" :disabled-date="getStartDisableDate" @change="startDateChange()" />
             </el-form-item>
             <el-form-item label="End Date" :label-width="formLabelWidth" prop="eventEndDate">
-                <el-col :span="8">
+                <el-col>
                     <el-date-picker v-model="form.eventEndDate" type="date" value-format="YYYY-MM-DD" autocomplete="off" :clearable="false" :disabled-date="getEndDisableDate" :disabled="form.sameDayEvent"/>
                 </el-col>
-                <el-col :span="5">
+                <el-col>
                     <el-checkbox v-model="form.sameDayEvent" label="Same as Start Date" @change="sameDayEventChange"/>
                 </el-col>
             </el-form-item>
