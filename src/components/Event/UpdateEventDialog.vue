@@ -159,6 +159,14 @@ const startDateChange =()=>{
         }
     }
 }
+const sameDayEventChange=()=>{
+    if(form.sameDayEvent){
+        form.eventEndDate = form.eventdate
+        if(form.endTimeStr<form.startTimeStr){
+            form.endTimeStr = null;
+        }
+    }
+}
 const getMaxEndTime =()=>{
     if(form.sameDayEvent || (form.eventEndDate == form.eventdate)){
         return form.endTimeStr;
@@ -248,7 +256,7 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
                     <el-date-picker v-model="form.eventEndDate" type="date" value-format="YYYY-MM-DD" autocomplete="off" :clearable="false" :disabled-date="getEndDisableDate" :disabled="form.sameDayEvent"/>
                 </el-col>
                 <el-col :span="5">
-                    <el-checkbox v-model="form.sameDayEvent" label="Same as Start Date" />
+                    <el-checkbox v-model="form.sameDayEvent" label="Same as Start Date" @change="sameDayEventChange"/>
                 </el-col>
             </el-form-item>
             <el-form-item label="Start Time" :label-width="formLabelWidth" prop="startTimeStr">
