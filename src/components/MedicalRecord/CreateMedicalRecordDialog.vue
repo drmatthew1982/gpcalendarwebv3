@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import {reactive, ref, toRefs, watch, defineProps, watchEffect, onMounted} from "vue";
-import SelectClientDialog from "@/components/Client/SelectClientDialog.vue";
-import SelectOrganisationDialog from "@/components/Organisation/SelectOrganisationDialog.vue";
+import {reactive, ref, toRefs, watch, defineProps, getCurrentInstance} from "vue";
 import {FormInstance, FormRules} from "element-plus";
-import service from "@/webservice";
 import VueDrawingCanvas from "vue-drawing-canvas";
-//import UpdateEventDialog from "@/components/Event/UpdateEventDialog.vue";
 import bgimage from "@/assets/jintaizu.jpg"
 let props = defineProps({
     medicalRecordShow: {
@@ -13,13 +9,11 @@ let props = defineProps({
         default: false,
     },
 });
+const instance = getCurrentInstance()
 const refProps = toRefs(props)
 let dialogVisible = ref(props.medicalRecordShow);
-let selectedDate = ref(props.defaultDate);
-let selectedEndDate = ref(props.defaultDate);
 let selectClientDialogShow = ref(false);
 let selectOrgDialogShow = ref(false);
-let endtimeDisable = ref(true)
 watch(refProps.medicalRecordShow, (val, old) => {
     dialogVisible.value = val
 }, {deep: true})//监听修改本地
@@ -30,58 +24,29 @@ const dialogClose = () => {
     //console.log(dialogVisible.value);
     emit('dialogClosed');
 }
-const formLabelWidth = '140px'
 const ruleFormRef = ref<FormInstance>()
 const form = reactive({
     event_id: undefined,
     image:undefined
 })
-const rules = reactive<FormRules>({
+const rules = reactive<FormRules>({});
 
-})
-const openClientSelectionForm = () => {
-    selectClientDialogShow.value = true;
 
-}
-const openOrgSelectionForm = () => {
-    selectOrgDialogShow.value = true;
-}
 const dialogClosed = ()=>{
     console.log("dialogClosed in Create Event Dialog");
     selectClientDialogShow.value = false;
     selectOrgDialogShow.value = false;
 }
-const selectClientClosed = (param)=>{
-    form.client_id = param.id;
-    form.client_first_name = param.firstname;
-    form.client_middle_name = param.middlename;
-    form.client_last_name = param.lastname;
-    form.client_id_no = param.client_id_no;
-    if(param.middlename!=null){
-        form.client_show_value = param.client_id_no +": "+ param.firstname+" "+param.middlename+ " "+param.lastname;
-    }else{
-        form.client_show_value = param.client_id_no +": "+ param.firstname+" "+param.lastname;
-    }
-    selectClientDialogShow.value = false;
-}
-const selectOrganisationClosed = (param)=> {
-    form.org_id = param.id;
-    form.org_code = param.org_code;
-    form.org_name = param.org_name;
-    form.org_show_value = param.org_code+"-"+param.org_name;
-    selectOrgDialogShow.value = false;
-}
+
+
 const headers= {
     Accept: 'application/json;charset=UTF-8',
     'Content-Type': 'application/x-www-form-urlencoded'
 }
-const getStartDisableDate =(date)=>{
-    if(!form.sameDayEvent){
-        return date>new Date(form.eventEndDate);
-    }
-}
-const formSubmit = async (formEl: FormInstance | undefined)=> {
-    console.log("submit: "+formEl);
+
+const saveRecord = async (formEl: FormInstance | undefined)=> {
+    console.log("submit: "+ruleFormRef.value);
+    console.log("bodyCanvas: "+ JSON.stringify(instance.refs.bodyCanvas.getAllStrokes()));
     if (!formEl) return
     await formEl.validate((valid, fields) => {
         console.log("valid: "+valid);
@@ -119,7 +84,7 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
 <template>
     <el-dialog v-model="dialogVisible" title="Medical Record" tabindex="-1" :before-close="dialogClose" append-to-body>
         <el-form ref="ruleFormRef" :model="form" :rules="rules">
-            <vue-drawing-canvas ref="VueCanvasDrawing"
+            <vue-drawing-canvas ref="bodyCanvas"
                                 v-model:image="form.image"
                                 :width="600"
                                 :height="400"
@@ -132,6 +97,9 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
         <template #footer>
           <span class="dialog-footer">
             <el-button @click="dialogClose">Cancel</el-button>
+              <el-button type="primary" @click="saveRecord(ruleFormRef)">
+              Save
+            </el-button>
             <el-button type="primary" @click="saveRecord(ruleFormRef)">
               Create
             </el-button>
