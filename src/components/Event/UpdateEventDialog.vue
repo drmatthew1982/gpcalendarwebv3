@@ -24,6 +24,7 @@ let selectedDate = ref(props.defaultDate)
 let selectClientDialogShow = ref(false);
 let selectOrgDialogShow = ref(false);
 let medicalRecordShow = ref(false);
+let eventid = ref("");
 let endtimeDisable = ref(true)
 watch(refProps.updateDialogShow, (val, old) => {
     dialogVisible.value = val
@@ -115,6 +116,7 @@ const openOrgSelectionForm = () => {
 }
 const  openMedicalRecord= () => {
     medicalRecordShow.value = true;
+    eventid = form.id;
 }
 const dialogClosed = ()=>{
     console.log("dialogClosed in Create Event Dialog");
@@ -289,7 +291,7 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
       </span>
         </template>
     </el-dialog>
-    <CreateMedicalRecordDialog :medicalRecordShow="medicalRecordShow"/>
+    <CreateMedicalRecordDialog :medicalRecordShow="medicalRecordShow"  @dialogClosed="dialogClosed"/>
     <SelectClientDialog :selectClientDialogShow="selectClientDialogShow" @selectClientClosed="selectClientClosed" @dialogClosed="dialogClosed"/>
     <SelectOrganisationDialog :selectOrgDialogShow="selectOrgDialogShow" @selectOrganisationClosed="selectOrganisationClosed" @dialogClosed="dialogClosed"/>
 </template>

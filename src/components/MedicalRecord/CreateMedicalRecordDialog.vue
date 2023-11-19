@@ -8,14 +8,19 @@ let props = defineProps({
         type: Boolean,
         default: false,
     },
+    parenteventid: {
+        type: String
+    },
 });
 const instance = getCurrentInstance()
 const refProps = toRefs(props)
 let dialogVisible = ref(props.medicalRecordShow);
-let selectClientDialogShow = ref(false);
-let selectOrgDialogShow = ref(false);
+let eventid = ref(props.parenteventid);
 watch(refProps.medicalRecordShow, (val, old) => {
     dialogVisible.value = val
+}, {deep: true})//监听修改本地
+watch(refProps.parenteventid, (val, old) => {
+    eventid.value = val
 }, {deep: true})//监听修改本地
 const emit = defineEmits(['dialogClosed'])
 const dialogClose = () => {
@@ -31,14 +36,6 @@ const form = reactive({
 })
 const rules = reactive<FormRules>({});
 
-
-const dialogClosed = ()=>{
-    console.log("dialogClosed in Create Event Dialog");
-    selectClientDialogShow.value = false;
-    selectOrgDialogShow.value = false;
-}
-
-
 const headers= {
     Accept: 'application/json;charset=UTF-8',
     'Content-Type': 'application/x-www-form-urlencoded'
@@ -52,7 +49,7 @@ const saveRecord = async (formEl: FormInstance | undefined)=> {
         console.log("valid: "+valid);
         console.log("fields: "+fields);
         if (valid) {
-            let event = {
+            let medicalRecorde = {
                 eventcmt: form.eventcmt,
                 client_id: form.client_id,
                 org_id: form.org_id,
@@ -82,17 +79,17 @@ const saveRecord = async (formEl: FormInstance | undefined)=> {
 </script>
 
 <template>
-    <el-dialog v-model="dialogVisible" title="Medical Record" tabindex="-1" :before-close="dialogClose" append-to-body>
+    <el-dialog v-model="dialogVisible" title="Medical Record" tabindex="-1" :before-close="dialogClose">
         <el-form ref="ruleFormRef" :model="form" :rules="rules">
             <vue-drawing-canvas ref="bodyCanvas"
                                 v-model:image="form.image"
-                                :width="600"
+                                :width="400"
                                 :height="400"
                                 :styles="{
                                   border: 'solid 1px #000',
                                 }"
-                                :background-image="bgimage"
-                                :lock="disabled"/>
+                                :background-image="bgimage"/>
+                                <!--:lock="disabled"-->
         </el-form>
         <template #footer>
           <span class="dialog-footer">
