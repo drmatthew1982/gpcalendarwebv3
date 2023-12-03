@@ -28,6 +28,7 @@ watch(refProps.medicalRecordShow, (val, old) => {
     dialogVisible.value = val
 }, {deep: true})//监听修改本地
 watch(refProps.m_record, (val, old) => {
+    console.log(val)
     record_id = val.id,
     form.summary = val.summary
     initialImage = JSON.parse(val.positions)
@@ -137,9 +138,6 @@ const saveRecord = async (formEl: FormInstance | undefined) => {
             <el-button @click="dialogClose">Cancel</el-button>
               <el-button type="primary" @click="saveRecord(ruleFormRef)">
               Save
-            </el-button>
-            <el-button type="primary" @click="saveRecord(ruleFormRef)">
-              Create
             </el-button>
           </span>
         </template>

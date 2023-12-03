@@ -56,7 +56,7 @@ watch(refProps.editdata, (val, old) => {
     }else{
         form.client_show_value = form.client_id_no +": "+ form.client_first_name+" "+form.client_last_name;
     }
-    findData(val.id);
+
 
 }, {deep: true})//监听修改本地
 const emit = defineEmits(['dialogClosed'])
@@ -119,7 +119,8 @@ const openOrgSelectionForm = () => {
     selectOrgDialogShow.value = true;
 }
 const  openMedicalRecord= () => {
-    medicalRecordShow.value = true;
+    console.log("openMedicalRecord:"+form.id)
+    findData(form.id);
 
 }
 const dialogClosed = ()=>{
@@ -203,7 +204,7 @@ const findData = (eventid) => {
         .then(response => {
             console.log("founddata");
             m_record= response.data[0];
-
+            medicalRecordShow.value = true;
         })
 }
 const formSubmit = async (formEl: FormInstance | undefined)=> {
