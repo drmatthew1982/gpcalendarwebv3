@@ -5,7 +5,7 @@ import SelectOrganisationDialog from "@/components/Organisation/SelectOrganisati
 import {FormInstance, FormRules} from "element-plus";
 import service from "@/webservice";
 import moment from 'moment'
-import CreateMedicalRecordDialog from "@/components/MedicalRecord/CreateMedicalRecordDialog.vue";
+import CreateMedicalRecordDialog from "@/components/MedicalRecord/MedicalRecordDialog.vue";
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 //import UpdateEventDialog from "@/components/Event/UpdateEventDialog.vue";
 

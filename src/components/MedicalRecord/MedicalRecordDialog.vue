@@ -3,6 +3,7 @@ import {reactive, ref, toRefs, watch, defineProps, getCurrentInstance} from "vue
 import {FormInstance, FormRules} from "element-plus";
 import VueDrawingCanvas from "vue-drawing-canvas";
 import bgimage from "@/assets/jintaizu.jpg"
+import service from "@/webservice";
 let props = defineProps({
     medicalRecordShow: {
         type: Boolean,
@@ -32,44 +33,39 @@ const dialogClose = () => {
 const ruleFormRef = ref<FormInstance>()
 const form = reactive({
     event_id: undefined,
-    image:undefined
+    summary: undefined,
+    image: undefined
 })
 const rules = reactive<FormRules>({});
 
-const headers= {
+const headers = {
     Accept: 'application/json;charset=UTF-8',
     'Content-Type': 'application/x-www-form-urlencoded'
 }
 
-const saveRecord = async (formEl: FormInstance | undefined)=> {
-    console.log("submit: "+ruleFormRef.value);
-    console.log("bodyCanvas: "+ JSON.stringify(instance.refs.bodyCanvas.getAllStrokes()));
+const saveRecord = async (formEl: FormInstance | undefined) => {
+    console.log("submit: " + ruleFormRef.value);
+    console.log("bodyCanvas: " + JSON.stringify(instance.refs.bodyCanvas.getAllStrokes()));
+    console.log("eventid: " + eventid);
     if (!formEl) return
     await formEl.validate((valid, fields) => {
-        console.log("valid: "+valid);
-        console.log("fields: "+fields);
+        console.log("valid: " + valid);
+        console.log("fields: " + fields);
         if (valid) {
             let medicalRecorde = {
-                eventcmt: form.eventcmt,
-                client_id: form.client_id,
-                org_id: form.org_id,
-                createby:localStorage.getItem('userid'),
-                assigned_to: localStorage.getItem('userid'),
-                eventdate:form.eventdate,
-                eventEndDate:form.eventEndDate,
-                startTimeStr:form.startTimeStr + ":00",
-                endTimeStr:form.endTimeStr + ":00",
-                reportStatus:form.reportStatus,
+                eventid: eventid,
+                summary: form.summary,
+                positions: JSON.stringify(instance.refs.bodyCanvas.getAllStrokes()),
                 created_user_id: localStorage.getItem('userid')
             };
-            // service.post('http://localhost:8080/createevent',
-            //     event,
-            //     headers).then(response => {
-            //     console.log(response.data);
-            //     dialogVisible.value = false;
-            //
-            //     emit('dialogClosed');
-            // })
+            service.post('http://localhost:8080/createmedicalrecord',
+                medicalRecorde,
+                headers).then(response => {
+                console.log(response.data);
+                dialogVisible.value = false;
+
+                emit('dialogClosed');
+            })
         }
     })
 
@@ -79,18 +75,38 @@ const saveRecord = async (formEl: FormInstance | undefined)=> {
 </script>
 
 <template>
-    <el-dialog v-model="dialogVisible" title="Medical Record" tabindex="-1" :before-close="dialogClose">
+    <el-dialog v-model="dialogVisible" title="Medical Record" tabindex="-1" :before-close="dialogClose"
+               display="flex" flex-direction="column">
+
         <el-form ref="ruleFormRef" :model="form" :rules="rules">
-            <vue-drawing-canvas ref="bodyCanvas"
-                                v-model:image="form.image"
-                                :width="400"
-                                :height="400"
-                                :styles="{
+            <el-row :gutter="20">
+                <el-col :span="10">
+                    <el-text>Summary</el-text>
+                    <el-input
+                            v-model="form.summary"
+                            type="textarea"
+                            placeholder="Please input"
+                            rows="18"
+                            resize="none"
+                            display="flex"
+                            flex = 1
+                    />
+                </el-col>
+                <el-col :span="10">
+                    <el-text>Image</el-text>
+                    <vue-drawing-canvas ref="bodyCanvas"
+                                        v-model:image="form.image"
+                                        :width="400"
+                                        :height="400"
+                                        :styles="{
                                   border: 'solid 1px #000',
                                 }"
-                                :background-image="bgimage"/>
-                                <!--:lock="disabled"-->
+                                        :background-image="bgimage"/>
+                    <!--:lock="disabled"-->
+                </el-col>
+            </el-row>
         </el-form>
+
         <template #footer>
           <span class="dialog-footer">
             <el-button @click="dialogClose">Cancel</el-button>
@@ -102,6 +118,7 @@ const saveRecord = async (formEl: FormInstance | undefined)=> {
             </el-button>
           </span>
         </template>
+
     </el-dialog>
 </template>
 
