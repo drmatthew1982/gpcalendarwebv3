@@ -20,19 +20,20 @@ let props = defineProps({
 });
 const refProps = toRefs(props)
 let dialogVisible = ref(props.updateDialogShow)
+let m_record = ref();
 let selectedDate = ref(props.defaultDate)
 let selectClientDialogShow = ref(false);
 let selectOrgDialogShow = ref(false);
 let medicalRecordShow = ref(false);
-let eventid = ref("");
 let endtimeDisable = ref(true)
 watch(refProps.updateDialogShow, (val, old) => {
     dialogVisible.value = val
 }, {deep: true})//监听修改本地
 watch(refProps.editdata, (val, old) => {
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-    console.log(moment(String(new Date(val.extendedProps.eventdate))).format('yyyy-MM-DD'));
+    console.log("DDDDD:"+moment(String(new Date(val.extendedProps.eventdate))).format('yyyy-MM-DD'));
     form.id = val.id,
+        //findData(val.id),
     form.eventcmt =  val.extendedProps.eventcmt,
     form.client_id=  val.extendedProps.client_id,
     form.client_first_name = val.extendedProps.firstname,
@@ -54,6 +55,8 @@ watch(refProps.editdata, (val, old) => {
     }else{
         form.client_show_value = form.client_id_no +": "+ form.client_first_name+" "+form.client_last_name;
     }
+    findData(val.id);
+
 }, {deep: true})//监听修改本地
 const emit = defineEmits(['dialogClosed'])
 const dialogClose = () => {
@@ -116,7 +119,7 @@ const openOrgSelectionForm = () => {
 }
 const  openMedicalRecord= () => {
     medicalRecordShow.value = true;
-    eventid = form.id;
+
 }
 const dialogClosed = ()=>{
     console.log("dialogClosed in Create Event Dialog");
@@ -185,6 +188,21 @@ const getMinStartTime =()=>{
     if(form.sameDayEvent|| (form.eventEndDate == form.eventdate)){
         return form.startTimeStr;
     }
+}
+const findData = (eventid) => {
+    console.log("findData");
+    console.log(eventid);
+    let par = {
+        "event_id":eventid
+    }
+    service.get('http://localhost:8080/findmedicalrecordbyeventid',
+        par,
+        headers)
+        .then(response => {
+            console.log("founddata");
+            m_record= response.data[0];
+
+        })
 }
 const formSubmit = async (formEl: FormInstance | undefined)=> {
     console.log("submit: "+formEl);
@@ -291,7 +309,7 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
       </span>
         </template>
     </el-dialog>
-    <CreateMedicalRecordDialog :medicalRecordShow="medicalRecordShow"  @dialogClosed="dialogClosed"/>
+    <CreateMedicalRecordDialog :medicalRecordShow="medicalRecordShow" :m_record="m_record" @dialogClosed="dialogClosed"/>
     <SelectClientDialog :selectClientDialogShow="selectClientDialogShow" @selectClientClosed="selectClientClosed" @dialogClosed="dialogClosed"/>
     <SelectOrganisationDialog :selectOrgDialogShow="selectOrgDialogShow" @selectOrganisationClosed="selectOrganisationClosed" @dialogClosed="dialogClosed"/>
 </template>

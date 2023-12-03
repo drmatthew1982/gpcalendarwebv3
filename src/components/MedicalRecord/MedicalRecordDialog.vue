@@ -1,38 +1,50 @@
 <script setup lang="ts">
-import {reactive, ref, toRefs, watch, defineProps, getCurrentInstance} from "vue";
+import {reactive, ref, toRefs, watch, defineProps, getCurrentInstance, onMounted} from "vue";
 import {FormInstance, FormRules} from "element-plus";
 import VueDrawingCanvas from "vue-drawing-canvas";
 import bgimage from "@/assets/jintaizu.jpg"
 import service from "@/webservice";
+onMounted(()=> {
+//setup 是围绕beforeCreate和created生命周期钩子运行的，不需要显式地定义它们。在这些钩子中编写的任何代码都应该直接在 setup 函数中编写。
+//生命周期基本都被重命名 首字母大写后加上on前缀  例如beforeUpdate => onBeforeUpdate
+
+})
 let props = defineProps({
     medicalRecordShow: {
         type: Boolean,
         default: false,
     },
-    parenteventid: {
-        type: String
+    m_record: {
+        type: Object
     },
 });
 const instance = getCurrentInstance()
 const refProps = toRefs(props)
 let dialogVisible = ref(props.medicalRecordShow);
-let eventid = ref(props.parenteventid);
+let record_id = ref("")
+let initialImage = ref([])
 watch(refProps.medicalRecordShow, (val, old) => {
     dialogVisible.value = val
 }, {deep: true})//监听修改本地
-watch(refProps.parenteventid, (val, old) => {
-    eventid.value = val
+watch(refProps.m_record, (val, old) => {
+    record_id = val.id,
+    form.summary = val.summary
+    initialImage = JSON.parse(val.positions)
+    console.log("initialImage " + val.positions);
 }, {deep: true})//监听修改本地
 const emit = defineEmits(['dialogClosed'])
 const dialogClose = () => {
     //console.log(dialogVisible.value);
     dialogVisible.value = false;
     //console.log(dialogVisible.value);
+
+    //instance.refs.bodyCanvas.reset();
+    //initialImage = ref([])
+    //instance.refs.bodyCanvas.redraw();
     emit('dialogClosed');
 }
 const ruleFormRef = ref<FormInstance>()
 const form = reactive({
-    event_id: undefined,
     summary: undefined,
     image: undefined
 })
@@ -42,28 +54,39 @@ const headers = {
     Accept: 'application/json;charset=UTF-8',
     'Content-Type': 'application/x-www-form-urlencoded'
 }
-
+// const findData = () => {
+//     console.log("findData");
+//     console.log(props.p_event_id);
+//     let par = {
+//         "eventid":props.p_event_id
+//     }
+//     service.get('http://localhost:8080/findmedicalrecordbyeventid',
+//         par,
+//         headers)
+//         .then(response => {
+//             console.log("founddata");
+//             console.log(response.data);
+//         })
+// }
 const saveRecord = async (formEl: FormInstance | undefined) => {
     console.log("submit: " + ruleFormRef.value);
     console.log("bodyCanvas: " + JSON.stringify(instance.refs.bodyCanvas.getAllStrokes()));
-    console.log("eventid: " + eventid);
+    console.log("record: " + record_id);
+
     if (!formEl) return
     await formEl.validate((valid, fields) => {
-        console.log("valid: " + valid);
-        console.log("fields: " + fields);
         if (valid) {
             let medicalRecorde = {
-                eventid: eventid,
+                id:record_id,
                 summary: form.summary,
                 positions: JSON.stringify(instance.refs.bodyCanvas.getAllStrokes()),
-                created_user_id: localStorage.getItem('userid')
+                modified_user_id: localStorage.getItem('userid')
             };
-            service.post('http://localhost:8080/createmedicalrecord',
+            service.post('http://localhost:8080/updatemedicalrecord',
                 medicalRecorde,
                 headers).then(response => {
                 console.log(response.data);
                 dialogVisible.value = false;
-
                 emit('dialogClosed');
             })
         }
@@ -99,8 +122,8 @@ const saveRecord = async (formEl: FormInstance | undefined) => {
                                         :width="400"
                                         :height="400"
                                         :styles="{
-                                  border: 'solid 1px #000',
-                                }"
+                                              border: 'solid 1px #000',
+                                            }"
                                         :background-image="bgimage"/>
                     <!--:lock="disabled"-->
                 </el-col>
