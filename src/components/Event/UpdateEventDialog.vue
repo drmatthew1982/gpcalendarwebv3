@@ -19,6 +19,7 @@ let props = defineProps({
     }
 });
 const refProps = toRefs(props)
+const componentKey = ref(0);
 let dialogVisible = ref(props.updateDialogShow)
 let m_record = ref();
 let selectedDate = ref(props.defaultDate)
@@ -126,6 +127,7 @@ const dialogClosed = ()=>{
     selectClientDialogShow.value = false;
     selectOrgDialogShow.value = false;
     medicalRecordShow.value = false;
+    componentKey.value += 1;
 }
 const selectClientClosed = (param)=>{
     form.client_id = param.id;
@@ -309,7 +311,7 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
       </span>
         </template>
     </el-dialog>
-    <CreateMedicalRecordDialog :medicalRecordShow="medicalRecordShow" :m_record="m_record" @dialogClosed="dialogClosed"/>
+    <CreateMedicalRecordDialog  :medicalRecordShow="medicalRecordShow" :m_record="m_record" :key="componentKey"  @dialogClosed="dialogClosed"/>
     <SelectClientDialog :selectClientDialogShow="selectClientDialogShow" @selectClientClosed="selectClientClosed" @dialogClosed="dialogClosed"/>
     <SelectOrganisationDialog :selectOrgDialogShow="selectOrgDialogShow" @selectOrganisationClosed="selectOrganisationClosed" @dialogClosed="dialogClosed"/>
 </template>

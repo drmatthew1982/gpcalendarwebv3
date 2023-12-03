@@ -20,6 +20,7 @@ let props = defineProps({
 });
 const instance = getCurrentInstance()
 const refProps = toRefs(props)
+
 let dialogVisible = ref(props.medicalRecordShow);
 let record_id = ref("")
 let initialImage = ref([])
@@ -30,17 +31,17 @@ watch(refProps.m_record, (val, old) => {
     record_id = val.id,
     form.summary = val.summary
     initialImage = JSON.parse(val.positions)
-    console.log("initialImage " + val.positions);
 }, {deep: true})//监听修改本地
 const emit = defineEmits(['dialogClosed'])
 const dialogClose = () => {
     //console.log(dialogVisible.value);
     dialogVisible.value = false;
     //console.log(dialogVisible.value);
-
     //instance.refs.bodyCanvas.reset();
     //initialImage = ref([])
     //instance.refs.bodyCanvas.redraw();
+    //instance.proxy.$forceUpdate();
+
     emit('dialogClosed');
 }
 const ruleFormRef = ref<FormInstance>()
@@ -124,6 +125,7 @@ const saveRecord = async (formEl: FormInstance | undefined) => {
                                         :styles="{
                                               border: 'solid 1px #000',
                                             }"
+                                        :initialImage = "initialImage"
                                         :background-image="bgimage"/>
                     <!--:lock="disabled"-->
                 </el-col>
