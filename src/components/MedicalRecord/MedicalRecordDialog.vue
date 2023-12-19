@@ -4,7 +4,8 @@ import {FormInstance, FormRules} from "element-plus";
 import VueDrawingCanvas from "vue-drawing-canvas";
 import bgimage from "@/assets/jintaizu.jpg"
 import service from "@/webservice";
-onMounted(()=> {
+
+onMounted(() => {
 //setup 是围绕beforeCreate和created生命周期钩子运行的，不需要显式地定义它们。在这些钩子中编写的任何代码都应该直接在 setup 函数中编写。
 //生命周期基本都被重命名 首字母大写后加上on前缀  例如beforeUpdate => onBeforeUpdate
 
@@ -24,13 +25,31 @@ const refProps = toRefs(props)
 let dialogVisible = ref(props.medicalRecordShow);
 let record_id = ref("")
 let initialImage = ref([])
+let eraser = ref(false);
+let color=ref("#000000");
+let strokeType=ref("dash");
+const options = ref([
+    {label:"Free",
+    value:"dash"},
+    {label:"Straight Line",
+    value:"line"},
+    {label:"Circle",
+     value:"circle"},
+    {label:"Square",
+     value:"square"},
+    {label:"Triangle",
+     value:"triangle"},
+    {label:"Half triangle",
+     value:"half_triangle"}
+    ]);
+
 watch(refProps.medicalRecordShow, (val, old) => {
     dialogVisible.value = val
 }, {deep: true})//监听修改本地
 watch(refProps.m_record, (val, old) => {
     console.log(val)
     record_id = val.id,
-    form.summary = val.summary
+        form.summary = val.summary
     initialImage = JSON.parse(val.positions)
 }, {deep: true})//监听修改本地
 const emit = defineEmits(['dialogClosed'])
@@ -79,7 +98,7 @@ const saveRecord = async (formEl: FormInstance | undefined) => {
     await formEl.validate((valid, fields) => {
         if (valid) {
             let medicalRecorde = {
-                id:record_id,
+                id: record_id,
                 summary: form.summary,
                 positions: JSON.stringify(instance.refs.bodyCanvas.getAllStrokes()),
                 modified_user_id: localStorage.getItem('userid')
@@ -111,24 +130,44 @@ const saveRecord = async (formEl: FormInstance | undefined) => {
                             v-model="form.summary"
                             type="textarea"
                             placeholder="Please input"
-                            rows="18"
+                            rows="20"
                             resize="none"
                             display="flex"
-                            flex = 1
+                            flex=1
                     />
                 </el-col>
                 <el-col :span="10">
                     <el-text>Image</el-text>
                     <vue-drawing-canvas ref="bodyCanvas"
                                         v-model:image="form.image"
-                                        :width="400"
-                                        :height="400"
+                                        :width="380"
+                                        :height="380"
                                         :styles="{
                                               border: 'solid 1px #000',
                                             }"
-                                        :initialImage = "initialImage"
-                                        :background-image="bgimage"/>
+                                        :initialImage="initialImage"
+                                        :background-image="bgimage"
+                                        :eraser="eraser"
+                                        :color="color"
+                                        :strokeType="strokeType"
+                                        />
                     <!--:lock="disabled"-->
+                    <el-switch v-model="eraser"
+                               active-text="Eraser"
+                               inactive-text="Draw"
+                               style="--el-switch-off-color: #13ce66; --el-switch-on-color: #ff4949"
+                    />
+                    <el-text class="mx-1">  |  Color:</el-text>
+                    <el-color-picker v-model="color" />
+                    <br/>
+                    <el-text>Line Style: </el-text>
+                    <el-select-v2
+                        v-model="strokeType"
+                        :options="options"
+                        placeholder="Please select"
+                        style="width: 150px"
+                        size="small"
+                />
                 </el-col>
             </el-row>
         </el-form>
