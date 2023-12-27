@@ -29,8 +29,9 @@ let eraser = ref(false);
 let color=ref("#000000");
 let strokeType=ref("dash");
 let lock=ref(false);
-let lineWidth=ref(5)
-const options = ref([
+let lineWidth=ref(5);
+let clickType=ref("cross");
+const strokeTypeOptions = ref([
     {label:"Free",
     value:"dash"},
     {label:"Straight Line",
@@ -44,7 +45,12 @@ const options = ref([
     {label:"Half triangle",
      value:"half_triangle"}
     ]);
-
+const clickOptions = ref([
+    {label:"Cross",
+        value:"cross"},
+    {label:"Circle",
+        value:"circle"}
+]);
 watch(refProps.medicalRecordShow, (val, old) => {
     dialogVisible.value = val
 }, {deep: true})//监听修改本地
@@ -79,37 +85,109 @@ const headers = {
 }
 
 const canvasClick = () => {
+    let canvas = instance.refs.bodyCanvas;
     if(lock.value){
-        console.log(event);
-         let init_x= event.layerX-300;
-         let init_y= event.layerY-18;
-         let strokes= {
-             type: 'dash',
-             from: {
-                 x: init_x, y: init_y
-             },
-             coordinates: [
-                  {"x":init_x+1,"y":init_y+1},
-                  {"x":init_x+2,"y":init_y+2},
-                  {"x":init_x+3,"y":init_y+3},
-                  {"x":init_x+4,"y":init_y+4},
-                  {"x":init_x+5,"y":init_y+5},
-                  {"x":init_x-10,"y":init_y-10},
-                  {"x":init_x-10,"y":init_y+10},
-                  // {"x":init_x+10,"y":init_y-10}
-             ],
-             color:"#FF0000",
-             width:5,
-             fill:false,
-             lineCap:"round",
-             lineJoin:"miter"
+         let returnCoordinates = canvas.getCoordinates(event);
+         let init_x= returnCoordinates.x;
+         let init_y= returnCoordinates.y;
+
+        if(clickType.value=="cross"){
+            let coordinates= [
+                {"x":init_x+1,"y":init_y+1},
+                {"x":init_x+2,"y":init_y+2},
+                {"x":init_x+3,"y":init_y+3},
+                {"x":init_x+4,"y":init_y+4},
+                {"x":init_x+5,"y":init_y+5},
+                {"x":init_x-1,"y":init_y-1},
+                {"x":init_x-2,"y":init_y-2},
+                {"x":init_x-3,"y":init_y-3},
+                {"x":init_x-4,"y":init_y-4},
+                {"x":init_x-5,"y":init_y-5},
+                {"x":init_x+1,"y":init_y-1},
+                {"x":init_x+2,"y":init_y-2},
+                {"x":init_x+3,"y":init_y-3},
+                {"x":init_x+4,"y":init_y-4},
+                {"x":init_x+5,"y":init_y-5},
+                {"x":init_x-1,"y":init_y+1},
+                {"x":init_x-2,"y":init_y+2},
+                {"x":init_x-3,"y":init_y+3},
+                {"x":init_x-4,"y":init_y+4},
+                {"x":init_x-5,"y":init_y+5}
+            ]
+            let strokes=
+                {
+                    type: 'dash',
+                    from: {
+                        x: init_x, y: init_y
+                    },
+                    coordinates: coordinates,
+                    color:color.value,
+                    width:lineWidth.value,
+                    fill:false
+                    //lineCap:"round",
+                    //lineJoin:"miter"
+                }
+
+            //canvas.drawing=true;
+            canvas.drawShape(canvas.context,strokes,false);
+            canvas.images.push(strokes);
+            canvas.redraw(true);
+            canvas.save();
          }
-        let canvas = instance.refs.bodyCanvas;
-        //canvas.drawing=true;
-        canvas.drawShape(canvas.context,strokes,false);
-        canvas.images.push(strokes);
-        canvas.redraw(true);
-        canvas.save();
+        if(clickType.value=="circle"){
+            //Put certen point
+            let coordinates=[{"x":init_x,"y":init_y}];
+            let strokes=
+                {
+                    type: 'dash',
+                    from: {
+                        x: init_x, y: init_y
+                    },
+                    coordinates: coordinates,
+                    color:color.value,
+                    width:lineWidth.value,
+                    fill:false
+                    //lineCap:"round",
+                    //lineJoin:"miter"
+                }
+
+            canvas.drawShape(canvas.context,strokes,false);
+            canvas.images.push(strokes);
+            canvas.redraw(true);
+            canvas.save();
+
+            let circleCoordinates = [{}];
+            let cricleFrom={};
+            let r = 10;
+            for(let i=0;i<360;i++){
+                let point_x = init_x + r * Math.cos(i  *  3.14/180   )
+                let point_y = init_y + r * Math.sin(i  *  3.14/180   )
+                if(i==0){
+                    canvas.context.moveTo(point_x, point_y);
+                    cricleFrom={x:point_x,y:point_y}
+                }else{
+                    circleCoordinates.push( {"x":point_x,"y":point_y})
+                }
+            }
+            let circleStrokes=
+                {
+                    type: 'dash',
+                    from: cricleFrom,
+                    coordinates: circleCoordinates,
+                    color:color.value,
+                    width:lineWidth.value,
+                    fill:false
+                    //lineCap:"round",
+                    //lineJoin:"miter"
+                }
+            canvas.drawShape(canvas.context,circleStrokes,false);
+            canvas.images.push(circleStrokes);
+            canvas.redraw(true);
+            canvas.save();
+            //canvas.drawing=true;
+
+        }
+
     }
 }
 // const findData = () => {
@@ -208,7 +286,7 @@ const saveRecord = async (formEl: FormInstance | undefined) => {
                     <el-text>Line Style: </el-text>
                     <el-select-v2
                         v-model="strokeType"
-                        :options="options"
+                        :options="strokeTypeOptions"
                         placeholder="Please select"
                         style="width: 150px"
                         size="small"
@@ -218,6 +296,15 @@ const saveRecord = async (formEl: FormInstance | undefined) => {
                     <el-switch v-model="lock"
                                active-text="Click Mode"
                                inactive-text="Draw Mode"
+                    />
+                    <br/>
+                    <el-text>Click Mode: </el-text>
+                    <el-select-v2
+                        v-model="clickType"
+                        :options="clickOptions"
+                        placeholder="Please select"
+                        style="width: 150px"
+                        size="small"
                     />
                 </el-col>
             </el-row>
