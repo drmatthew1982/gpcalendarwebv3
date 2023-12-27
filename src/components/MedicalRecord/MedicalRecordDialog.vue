@@ -75,6 +75,40 @@ const headers = {
     Accept: 'application/json;charset=UTF-8',
     'Content-Type': 'application/x-www-form-urlencoded'
 }
+
+const canvasClick = () => {
+  console.log(event);
+   let init_x= event.layerX-300;
+   let init_y= event.layerY-18;
+   let strokes= {
+       type: 'dash',
+       from: {
+           x: init_x, y: init_y
+       },
+       coordinates: [
+            {"x":init_x+1,"y":init_y+1},
+            {"x":init_x+2,"y":init_y+2},
+            {"x":init_x+3,"y":init_y+3},
+            {"x":init_x+4,"y":init_y+4},
+            {"x":init_x+5,"y":init_y+5},
+            {"x":init_x-10,"y":init_y-10},
+            {"x":init_x-10,"y":init_y+10},
+            // {"x":init_x+10,"y":init_y-10}
+       ],
+       color:"#FF0000",
+       width:5,
+       fill:false,
+       lineCap:"round",
+       lineJoin:"miter"
+   }
+  let canvas = instance.refs.bodyCanvas;
+  //canvas.drawing=true;
+  canvas.drawShape(canvas.context,strokes,false);
+  canvas.images.push(strokes);
+  canvas.redraw(true);
+  canvas.save();
+
+}
 // const findData = () => {
 //     console.log("findData");
 //     console.log(props.p_event_id);
@@ -150,6 +184,7 @@ const saveRecord = async (formEl: FormInstance | undefined) => {
                                         :eraser="eraser"
                                         :color="color"
                                         :strokeType="strokeType"
+                                        @click=canvasClick(event)
                                         />
                     <!--:lock="disabled"-->
                     <el-switch v-model="eraser"
