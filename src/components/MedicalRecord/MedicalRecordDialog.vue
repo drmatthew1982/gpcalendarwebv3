@@ -28,6 +28,8 @@ let initialImage = ref([])
 let eraser = ref(false);
 let color=ref("#000000");
 let strokeType=ref("dash");
+let lock=ref(false);
+let lineWidth=ref(5)
 const options = ref([
     {label:"Free",
     value:"dash"},
@@ -77,37 +79,38 @@ const headers = {
 }
 
 const canvasClick = () => {
-  console.log(event);
-   let init_x= event.layerX-300;
-   let init_y= event.layerY-18;
-   let strokes= {
-       type: 'dash',
-       from: {
-           x: init_x, y: init_y
-       },
-       coordinates: [
-            {"x":init_x+1,"y":init_y+1},
-            {"x":init_x+2,"y":init_y+2},
-            {"x":init_x+3,"y":init_y+3},
-            {"x":init_x+4,"y":init_y+4},
-            {"x":init_x+5,"y":init_y+5},
-            {"x":init_x-10,"y":init_y-10},
-            {"x":init_x-10,"y":init_y+10},
-            // {"x":init_x+10,"y":init_y-10}
-       ],
-       color:"#FF0000",
-       width:5,
-       fill:false,
-       lineCap:"round",
-       lineJoin:"miter"
-   }
-  let canvas = instance.refs.bodyCanvas;
-  //canvas.drawing=true;
-  canvas.drawShape(canvas.context,strokes,false);
-  canvas.images.push(strokes);
-  canvas.redraw(true);
-  canvas.save();
-
+    if(lock.value){
+        console.log(event);
+         let init_x= event.layerX-300;
+         let init_y= event.layerY-18;
+         let strokes= {
+             type: 'dash',
+             from: {
+                 x: init_x, y: init_y
+             },
+             coordinates: [
+                  {"x":init_x+1,"y":init_y+1},
+                  {"x":init_x+2,"y":init_y+2},
+                  {"x":init_x+3,"y":init_y+3},
+                  {"x":init_x+4,"y":init_y+4},
+                  {"x":init_x+5,"y":init_y+5},
+                  {"x":init_x-10,"y":init_y-10},
+                  {"x":init_x-10,"y":init_y+10},
+                  // {"x":init_x+10,"y":init_y-10}
+             ],
+             color:"#FF0000",
+             width:5,
+             fill:false,
+             lineCap:"round",
+             lineJoin:"miter"
+         }
+        let canvas = instance.refs.bodyCanvas;
+        //canvas.drawing=true;
+        canvas.drawShape(canvas.context,strokes,false);
+        canvas.images.push(strokes);
+        canvas.redraw(true);
+        canvas.save();
+    }
 }
 // const findData = () => {
 //     console.log("findData");
@@ -184,6 +187,8 @@ const saveRecord = async (formEl: FormInstance | undefined) => {
                                         :eraser="eraser"
                                         :color="color"
                                         :strokeType="strokeType"
+                                        :lock = "lock"
+                                        :lineWidth="lineWidth"
                                         @click=canvasClick(event)
                                         />
                     <!--:lock="disabled"-->
@@ -195,6 +200,11 @@ const saveRecord = async (formEl: FormInstance | undefined) => {
                     <el-text class="mx-1">  |  Color:</el-text>
                     <el-color-picker v-model="color" />
                     <br/>
+                    <el-text class="mx-1">Line width:</el-text>
+                    <select v-model="lineWidth">
+                        <option v-for="n in 25" :key="'option-' + n" :value="n">{{ n }}</option>
+                    </select>
+                    <br/>
                     <el-text>Line Style: </el-text>
                     <el-select-v2
                         v-model="strokeType"
@@ -202,7 +212,13 @@ const saveRecord = async (formEl: FormInstance | undefined) => {
                         placeholder="Please select"
                         style="width: 150px"
                         size="small"
-                />
+                    />
+                    <br/>
+                    <el-text>Mode Selection: </el-text>
+                    <el-switch v-model="lock"
+                               active-text="Click Mode"
+                               inactive-text="Draw Mode"
+                    />
                 </el-col>
             </el-row>
         </el-form>
