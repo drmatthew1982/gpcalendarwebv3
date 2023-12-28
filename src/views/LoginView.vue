@@ -125,6 +125,7 @@ export default {
                 if (response.data.length > 0) {
                     localStorage.setItem('token', 'logined');
                     localStorage.setItem('userid', response.data[0].id);
+                    localStorage.setItem('username', response.data[0].username);
                     window.location.href = "/";
                 }else{
                     ElMessage({

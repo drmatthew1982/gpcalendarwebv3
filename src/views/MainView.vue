@@ -24,13 +24,14 @@ let list = reactive([
     }
 ])
 const active_name_change = (index:any)=>{
-    console.log(index);
+    //console.log(index);
     active_name.value=list[index].component
 }
 function logout() {
     console.log("logout");
     localStorage.setItem('token','');
-    localStorage.setItem('uderid','');
+    localStorage.setItem('userid','');
+    localStorage.setItem('username','');
     //router.push('/');
     window.location.href="/"
 }
