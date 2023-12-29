@@ -6,6 +6,7 @@ import GPCalendar from "@/components/GPCalendar.vue";
 import OrganizationTable from "@/components/Organisation/OrganisationTable.vue";
 import ClientTable from "@/components/Client/ClientTable.vue";
 import UnderConstruct from "@/components/UnderConstruct.vue";
+import UserManagePage from "@/components/User/UserManagePage.vue";
 import EventDialog from '@/components/Event/UpdateEventDialog.vue';
 import { RouterLink, RouterView } from 'vue-router'
 const active_name = shallowRef(GPCalendar);
@@ -21,6 +22,9 @@ let list = reactive([
     }
     ,{
         name:'UnderConstruct',component:markRaw(UnderConstruct)
+    },
+    {
+        name:'UserManagePage',component:markRaw(UserManagePage)
     }
 ])
 const active_name_change = (index:any)=>{

@@ -48,11 +48,8 @@ const headers= {
     'Content-Type': 'application/x-www-form-urlencoded'
 }
 const formSubmit = async (formEl: FormInstance | undefined)=> {
-    console.log("submit: "+formEl);
     if (!formEl) return
     await formEl.validate((valid, fields) => {
-        console.log("valid: "+valid);
-        console.log("fields: "+fields);
         if (valid) {
             let client = {
                 firstname: ruleForm.firstname,

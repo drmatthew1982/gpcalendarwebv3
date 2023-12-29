@@ -44,6 +44,10 @@ const click = (value: any) => {
                     <el-icon><User /></el-icon>
                     <span>My Client</span>
                 </el-menu-item>
+                <el-menu-item index="2" @click="click(4)">
+                    <el-icon><User /></el-icon>
+                    <span>Myself</span>
+                </el-menu-item>
             </el-menu>
         </el-col>
     </el-row>
