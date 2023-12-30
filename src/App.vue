@@ -6,8 +6,8 @@ import GPCalendar from "@/components/GPCalendar.vue";
 import OrganizationForm from "@/components/OrganizationForm.vue";
 import EventDialog from '@/components/Event/UpdateEventDialog.vue';
 import { RouterLink, RouterView } from 'vue-router'
-const active_name = shallowRef(GPCalendar);
 
+const active_name = shallowRef(GPCalendar);
 let list = reactive([
     {
         name:'GPCalendar',component:markRaw(GPCalendar)

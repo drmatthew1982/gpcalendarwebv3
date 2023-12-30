@@ -4,9 +4,7 @@ import {reactive, ref} from "vue";
 import {FormInstance, FormRules} from "element-plus";
 import service from "@/webservice";
 import md5 from "js-md5";
-import { useBase64 } from '@vueuse/core'
-
-
+import CryptoJS from 'crypto-js';
 const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive({
     newpassword:undefined,
@@ -29,19 +27,41 @@ const rules = reactive<FormRules>({
         {required: true, message: 'Confirm password should same as "new password"', trigger: 'blur', validator: validatePass2()}
     ]
 })
-
-
-const changePassword = async (formEl: FormInstance | undefined)=>{
+const headers= {
+    Accept: 'application/json;charset=UTF-8',
+    'Content-Type': 'application/x-www-form-urlencoded'
+}
+const changePassword = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
     await formEl.validate((valid, fields) => {
         if (valid) {
-            let user = {
-                id: localStorage.getItem('userid'),
-                password: useBase64(md5(ruleForm.newpassword) + generateRandomID(10))
-            };
+            let prepassword = md5(ruleForm.newpassword) + generateRandomID(10)
+            console.log(prepassword);
+            let username = localStorage.getItem('username')
+            let key=CryptoJS.enc.Utf8.parse("1111222233334444")
+            let iv = CryptoJS.enc.Utf8.parse("1111222233334444" );
+            let srcs = CryptoJS.enc.Utf8.parse(prepassword);
+            let encrypted =  CryptoJS.AES.encrypt(srcs,key,{
+                    iv:iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.ZeroPadding,
+            });
+            let password = CryptoJS.enc.Base64.stringify(encrypted.ciphertext);
+            console.log(password);
+            let user={
+                id:localStorage.getItem('userid'),
+                username:username,
+                password:password
+            }
+            service.post('http://localhost:8080/updatepassword',
+                user,
+                headers).then(response => {
+                console.log(response.data);
+            })
         }
     })
 }
+
 const generateRandomID = (length:number) => {
     const characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const idLength = length; // 字符串长度 这里生成30位的
