@@ -35,7 +35,7 @@ const changePassword = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
     await formEl.validate((valid, fields) => {
         if (valid) {
-            let prepassword = md5(ruleForm.newpassword) + generateRandomID(10)
+            let prepassword = md5(ruleForm.newpassword) + generateRandomID(16)
             console.log(prepassword);
             let username = localStorage.getItem('username')
             let key=CryptoJS.enc.Utf8.parse("1111222233334444")
@@ -44,7 +44,7 @@ const changePassword = async (formEl: FormInstance | undefined) => {
             let encrypted =  CryptoJS.AES.encrypt(srcs,key,{
                     iv:iv,
                     mode: CryptoJS.mode.CBC,
-                    padding: CryptoJS.pad.ZeroPadding,
+                    padding: CryptoJS.pad.NoPadding,
             });
             let password = CryptoJS.enc.Base64.stringify(encrypted.ciphertext);
             console.log(password);
