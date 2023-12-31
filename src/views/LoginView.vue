@@ -123,7 +123,6 @@ export default {
                  params,
                  headers).then(response=> {
                  securekey=response.data[0]
-                 console.log("securekey:"+securekey)
                  params.append("password",md5(md5(form.loginpassword+form.loginname)+securekey));
                  let obj = service.post('http://localhost:8080/logincheck',
                      params,
@@ -144,12 +143,6 @@ export default {
                      }
                  });
             });
-
-
-
-
-            //router.push('/');
-
         }
         // 注册
         function register() {

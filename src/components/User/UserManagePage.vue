@@ -47,7 +47,6 @@ const changePassword = async (formEl: FormInstance | undefined) => {
                     padding: CryptoJS.pad.NoPadding,
             });
             let password = CryptoJS.enc.Base64.stringify(encrypted.ciphertext);
-            console.log(password);
             let user={
                 id:localStorage.getItem('userid'),
                 username:username,
@@ -56,7 +55,6 @@ const changePassword = async (formEl: FormInstance | undefined) => {
             service.post('http://localhost:8080/updatepassword',
                 user,
                 headers).then(response => {
-                console.log(response.data);
             })
         }
     })
@@ -80,7 +78,6 @@ const fulfillZeroTill16 = (string:string) => {
     for (let i = string.length;i < 16; i++) {
         string = string+"0";
     }
-    console.log(string)
     return string;
 }
 

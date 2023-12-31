@@ -41,16 +41,13 @@ const dialogClosed = ()=>{
 }
 const edit = (scope) => {
     editdata = scope.row;
-    console.log(editdata.id);
     editDialogShow.value = true;
 }
 const editDialogClosed = ()=>{
-    console.log("editDialogClosed");
     findData();
     editDialogShow.value = false;
 }
 const showCreateForm = () => {
-    console.log('click');
     dialogShow.value = true;
 }
 const headers= {
@@ -65,7 +62,6 @@ const findData =  ()=> {
         organisation,
         headers).then(response=> {
         tableData.arr=response.data;
-        console.log(tableData.arr);
     })
 
 

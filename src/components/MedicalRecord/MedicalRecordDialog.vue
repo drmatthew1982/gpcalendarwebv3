@@ -55,21 +55,13 @@ watch(refProps.medicalRecordShow, (val, old) => {
     dialogVisible.value = val
 }, {deep: true})//监听修改本地
 watch(refProps.m_record, (val, old) => {
-    console.log(val)
     record_id = val.id,
         form.summary = val.summary
     initialImage = JSON.parse(val.positions)
 }, {deep: true})//监听修改本地
 const emit = defineEmits(['dialogClosed'])
 const dialogClose = () => {
-    //console.log(dialogVisible.value);
     dialogVisible.value = false;
-    //console.log(dialogVisible.value);
-    //instance.refs.bodyCanvas.reset();
-    //initialImage = ref([])
-    //instance.refs.bodyCanvas.redraw();
-    //instance.proxy.$forceUpdate();
-
     emit('dialogClosed');
 }
 const ruleFormRef = ref<FormInstance>()
@@ -190,25 +182,7 @@ const canvasClick = () => {
 
     }
 }
-// const findData = () => {
-//     console.log("findData");
-//     console.log(props.p_event_id);
-//     let par = {
-//         "eventid":props.p_event_id
-//     }
-//     service.get('http://localhost:8080/findmedicalrecordbyeventid',
-//         par,
-//         headers)
-//         .then(response => {
-//             console.log("founddata");
-//             console.log(response.data);
-//         })
-// }
 const saveRecord = async (formEl: FormInstance | undefined) => {
-    console.log("submit: " + ruleFormRef.value);
-    console.log("bodyCanvas: " + JSON.stringify(instance.refs.bodyCanvas.getAllStrokes()));
-    console.log("record: " + record_id);
-
     if (!formEl) return
     await formEl.validate((valid, fields) => {
         if (valid) {
@@ -221,7 +195,6 @@ const saveRecord = async (formEl: FormInstance | undefined) => {
             service.post('http://localhost:8080/updatemedicalrecord',
                 medicalRecorde,
                 headers).then(response => {
-                console.log(response.data);
                 dialogVisible.value = false;
                 emit('dialogClosed');
             })

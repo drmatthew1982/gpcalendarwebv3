@@ -50,7 +50,6 @@ const headers= {
     'Content-Type': 'application/x-www-form-urlencoded'
 }
 const formSubmit = ()=> {
-    console.log("====:"+editdata.id);
     let organisation = {
         org_name:ruleform.name,
         org_code:ruleform.code,
@@ -60,7 +59,6 @@ const formSubmit = ()=> {
     service.post('http://localhost:8080/updateorg',
         organisation,
         headers).then(response=> {
-        console.log(response.data);
         dialogVisible.value = false;
         emit('editDialogClosed');
     })

@@ -32,7 +32,6 @@ watch(refProps.updateDialogShow, (val, old) => {
 }, {deep: true})//监听修改本地
 watch(refProps.editdata, (val, old) => {
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-    console.log("DDDDD:"+moment(String(new Date(val.extendedProps.eventdate))).format('yyyy-MM-DD'));
     form.id = val.id,
         //findData(val.id),
     form.eventcmt =  val.extendedProps.eventcmt,
@@ -61,9 +60,7 @@ watch(refProps.editdata, (val, old) => {
 }, {deep: true})//监听修改本地
 const emit = defineEmits(['dialogClosed'])
 const dialogClose = () => {
-    //console.log(dialogVisible.value);
     dialogVisible.value = false;
-    //console.log(dialogVisible.value);
     emit('dialogClosed');
 }
 const formLabelWidth = '140px'
@@ -119,12 +116,10 @@ const openOrgSelectionForm = () => {
     selectOrgDialogShow.value = true;
 }
 const  openMedicalRecord= () => {
-    console.log("openMedicalRecord:"+form.id)
     findData(form.id);
 
 }
 const dialogClosed = ()=>{
-    console.log("dialogClosed in Create Event Dialog");
     selectClientDialogShow.value = false;
     selectOrgDialogShow.value = false;
     medicalRecordShow.value = false;
@@ -167,7 +162,6 @@ const getEndDisableDate =(date)=>{
 const startDateChange =()=>{
     if(form.sameDayEvent) {
         form.eventEndDate = form.eventdate
-        console.log(form.eventEndDate);
     }else{
         if(new Date(form.eventEndDate)< new Date(form.eventdate)){
             form.eventEndDate = form.eventdate
@@ -193,8 +187,6 @@ const getMinStartTime =()=>{
     }
 }
 const findData = (eventid) => {
-    console.log("findData");
-    console.log(eventid);
     let par = {
         "event_id":eventid
     }
@@ -202,17 +194,13 @@ const findData = (eventid) => {
         par,
         headers)
         .then(response => {
-            console.log("founddata");
             m_record= response.data[0];
             medicalRecordShow.value = true;
         })
 }
 const formSubmit = async (formEl: FormInstance | undefined)=> {
-    console.log("submit: "+formEl);
     if (!formEl) return
     await formEl.validate((valid, fields) => {
-        console.log("valid: "+valid);
-        console.log("fields: "+fields);
         if (valid) {
             let event = {
                 id: form.id,
@@ -231,7 +219,6 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
             service.post('http://localhost:8080/updateevent',
                 event,
                 headers).then(response => {
-                console.log(response.data);
                 dialogVisible.value = false;
                 form.eventcmt = undefined;
                 form.client_id = undefined;

@@ -18,12 +18,10 @@ watch(refProps.selectClientDialogShow, (val, old) => {
 const emit = defineEmits(['selectClientClosed','dialogClosed'])
 const dialogClosed = ()=> {
     dialogVisible.value=false;
-    console.log('close');
     emit('dialogClosed');
 }
 const selectDialogClose = (param)=> {
     dialogVisible.value=false;
-    console.log(param.firstname);
     emit('selectClientClosed',param);
 }
 

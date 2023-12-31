@@ -63,7 +63,6 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
             service.post('http://localhost:8080/createclient',
                 client,
                 headers).then(response => {
-                console.log(response.data);
                 dialogVisible.value = false;
                 emit('dialogClosed');
             })

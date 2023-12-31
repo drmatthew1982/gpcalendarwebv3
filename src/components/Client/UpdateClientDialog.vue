@@ -62,7 +62,6 @@ const headers= {
     'Content-Type': 'application/x-www-form-urlencoded'
 }
 const formSubmit = ()=> {
-    console.log("====:"+editdata.id);
     let client = {
         firstname: ruleForm.firstname,
         middlename: ruleForm.middlename,
@@ -76,7 +75,6 @@ const formSubmit = ()=> {
     service.post('http://localhost:8080/updateevent',
         client,
         headers).then(response=> {
-        console.log(response.data);
         dialogVisible.value = false;
         emit('editDialogClosed');
     })

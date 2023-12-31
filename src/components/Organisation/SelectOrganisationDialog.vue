@@ -17,12 +17,10 @@ watch(refProps.selectOrgDialogShow, (val, old) => {
 const emit = defineEmits(['selectOrganisationClosed','dialogClosed'])
 const dialogClosed = ()=> {
     dialogVisible.value=false;
-    console.log('close');
     emit('dialogClosed');
 }
 const selectDialogClose = (param)=> {
     dialogVisible.value=false;
-    console.log(param.firstname);
     emit('selectOrganisationClosed',param);
 }
 

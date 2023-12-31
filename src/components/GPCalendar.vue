@@ -77,7 +77,6 @@ document.addEventListener('DOMContentLoaded', function() {
         editable: true,
         dateClick: function(info) {
             //alert('clicked ' + info.dateStr);
-            console.log(createDialogShow.value);
             createDialogShow.value=true;
             defaultDate.value=info.dateStr;
 
@@ -101,14 +100,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // ]
     });
 
-    console.log(calendar.view.currentStart);
     calendar.addEventSource(events);
     findEvent(calendar.view.currentEnd.toISOString(),calendar);
     calendar.render();
-    console.log(calendar.getEvents());
 });
 const dialogClosed = ()=>{
-    console.log("dialogClosed");
     updateDialogShow.value = false;
     createDialogShow.value = false;
     findEvent(calendar.view.currentEnd.toISOString(),calendar);
@@ -118,7 +114,7 @@ const headers = {
     'Content-Type': 'application/x-www-form-urlencoded'
 }
 const findEvent = (current_date,calendar) => {
-    console.log(current_date);
+
     let par = {
         "user_id": localStorage.getItem('userid'),
         "current_date":current_date.split('T')[0]
@@ -134,9 +130,6 @@ const findEvent = (current_date,calendar) => {
             //     calendar.addEvent(value);
             // })
             calendar.addEventSource(events);
-            console.log(events);
-            console.log(calendar.getEvents());
-
         })
 }
 

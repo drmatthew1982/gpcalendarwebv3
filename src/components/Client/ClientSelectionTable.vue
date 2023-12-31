@@ -90,25 +90,21 @@ const dialogClosed = () => {
 }
 const edit = (scope) => {
     editdata = scope.row;
-    console.log(editdata.id);
     editDialogShow.value = true;
 }
 const emit = defineEmits(['dialogClosed'])
 const select = (scope) => {
     selectdata = scope.row;
-    console.log(selectdata.id);
     //console.log(dialogVisible.value);
     dialogShow.value = false;
     //console.log(dialogVisible.value);
     emit('dialogClosed',selectdata);
 }
 const editDialogClosed = () => {
-    console.log("editDialogClosed");
     findData();
     editDialogShow.value = false;
 }
 const showCreateForm = () => {
-    console.log('click');
     dialogShow.value = true;
 }
 const headers = {

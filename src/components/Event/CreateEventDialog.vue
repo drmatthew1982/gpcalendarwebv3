@@ -31,9 +31,7 @@ watch(refProps.defaultDate, (val, old) => {
 }, {deep: true})//监听修改本地
 const emit = defineEmits(['dialogClosed'])
 const dialogClose = () => {
-    //console.log(dialogVisible.value);
     dialogVisible.value = false;
-    //console.log(dialogVisible.value);
     emit('dialogClosed');
 }
 const formLabelWidth = '140px'

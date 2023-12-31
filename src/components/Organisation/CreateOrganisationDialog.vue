@@ -18,7 +18,6 @@ watch(refProps.dialogShow, (val, old) => {
 const emit = defineEmits(['dialogClosed'])
 const dialogClose = ()=> {
     dialogVisible.value=false;
-    console.log('close');
     emit('dialogClosed');
 }
 const formLabelWidth = '140px'
@@ -41,11 +40,8 @@ const headers= {
     'Content-Type': 'application/x-www-form-urlencoded'
 }
 const formSubmit = async (formEl: FormInstance | undefined)=> {
-    console.log("submit: "+formEl);
     if (!formEl) return
     await formEl.validate((valid, fields) => {
-        console.log("valid: "+valid);
-        console.log("fields: "+fields);
         if (valid) {
             let organisation = {
                 org_name: ruleForm.name,
@@ -55,7 +51,6 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
             service.post('http://localhost:8080/createorg',
                 organisation,
                 headers).then(response => {
-                console.log(response.data);
                 dialogVisible.value = false;
                 emit('dialogClosed');
             })
