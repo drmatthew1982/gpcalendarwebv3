@@ -21,7 +21,7 @@ const click = (value: any) => {
 <template>
     <el-row class="tac">
         <el-col :span="24">
-            <h5 class="mb-2">Default colors</h5>
+            <h5 class="mb-2">Menu</h5>
             <el-menu
                     default-active="2"
                     class="el-menu-vertical-demo"
