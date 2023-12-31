@@ -127,7 +127,6 @@ export default {
                  let obj = service.post('http://localhost:8080/logincheck',
                      params,
                      headers).then(response=> {
-                     console.log(response)
                      if (response.data.length > 0) {
                          localStorage.setItem('token', 'logined');
                          localStorage.setItem('userid', response.data[0].id);

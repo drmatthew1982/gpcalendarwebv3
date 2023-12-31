@@ -13,7 +13,6 @@ let list = reactive([
     }
 ])
 const active_name_change = (index:any)=>{
-    console.log(index);
     active_name.value=list[index].component
 }
 </script>

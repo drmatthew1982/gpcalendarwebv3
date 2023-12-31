@@ -7,12 +7,10 @@ import router from "./router/index";
 router.beforeEach((to,from,next)=>{
     //判断该路由是否需要登录权限
     //record.meta.requireAuth是获取到该请求中携带的该参数
-    console.log(from);
-    console.log(to);
     if (to.matched.some(record => record.meta.requireAuth)){
         //获取到本地的token
         const token = localStorage.getItem("token")
-        console.log("显示token----------：" + token)
+        console.log("token：" + token)
         //判断当前的token是否存在，也就是登录时的token
         if (token){
             //如果指向的是登录页面，不做任何操作

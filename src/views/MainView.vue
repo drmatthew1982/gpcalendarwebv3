@@ -32,7 +32,6 @@ const active_name_change = (index:any)=>{
     active_name.value=list[index].component
 }
 function logout() {
-    console.log("logout");
     localStorage.setItem('token','');
     localStorage.setItem('userid','');
     localStorage.setItem('username','');

@@ -16,9 +16,9 @@ initAxios.interceptors.request.use((config) => {
 
 //响应拦截器
 initAxios.interceptors.response.use((response) => {
-    console.log("Fetch response");
-    console.log(response.data.length);
-    console.log(response.status);
+    //console.log("Fetch response");
+    //console.log(response.data.length);
+    //console.log(response.status);
     if (response.status === 200 ) {
         return response
     } else {
