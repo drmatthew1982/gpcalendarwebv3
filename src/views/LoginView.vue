@@ -93,6 +93,7 @@ import { reactive, toRefs } from "@vue/reactivity";
 import { ElMessage } from "element-plus";
 import { useRouter } from 'vue-router';
 import service from '@/webservice'
+import md5 from "js-md5";
 export default {
     setup() {
         const form = reactive({
@@ -115,27 +116,37 @@ export default {
         // 方法
         // 登录
         function login() {console.log("login");
+            let securekey = '111';
             let params = new URLSearchParams();
             params.append("username",form.loginname);
-            params.append("password",form.loginpassword);
-            let obj = service.post('http://localhost:8080/logincheck',
-                params,
-                headers).then(response=> {
-                    console.log(response.data)
-                if (response.data.length > 0) {
-                    localStorage.setItem('token', 'logined');
-                    localStorage.setItem('userid', response.data[0].id);
-                    localStorage.setItem('username', response.data[0].username);
-                    window.location.href = "/";
-                }else{
-                    ElMessage({
-                        type: 'error',
-                        showClose: true,
-                        dangerouslyUseHTMLString: true,
-                        message: "Login error",
-                    })
-                }
+             service.post('http://localhost:8080/getSecKey',
+                 params,
+                 headers).then(response=> {
+                 securekey=response.data[0]
+                 console.log("securekey:"+securekey)
+                 params.append("password",md5(md5(form.loginpassword+form.loginname)+securekey));
+                 let obj = service.post('http://localhost:8080/logincheck',
+                     params,
+                     headers).then(response=> {
+                     console.log(response)
+                     if (response.data.length > 0) {
+                         localStorage.setItem('token', 'logined');
+                         localStorage.setItem('userid', response.data[0].id);
+                         localStorage.setItem('username', response.data[0].username);
+                         window.location.href = "/";
+                     }else{
+                         ElMessage({
+                             type: 'error',
+                             showClose: true,
+                             dangerouslyUseHTMLString: true,
+                             message: "Login error,check user name or password,please",
+                         })
+                     }
+                 });
             });
+
+
+
 
             //router.push('/');
 

@@ -35,11 +35,11 @@ const changePassword = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
     await formEl.validate((valid, fields) => {
         if (valid) {
-            let prepassword = md5(ruleForm.newpassword) + generateRandomID(16)
+            let username:string = localStorage.getItem('username')
+            let prepassword = md5(ruleForm.newpassword+username) + generateRandomID(16)
             console.log(prepassword);
-            let username = localStorage.getItem('username')
-            let key=CryptoJS.enc.Utf8.parse("1111222233334444")
-            let iv = CryptoJS.enc.Utf8.parse("1111222233334444" );
+            let key=CryptoJS.enc.Utf8.parse(fulfillZeroTill16(username.substring(0,3)))
+            let iv = CryptoJS.enc.Utf8.parse(fulfillZeroTill16(username.substring(username.length-3) ));
             let srcs = CryptoJS.enc.Utf8.parse(prepassword);
             let encrypted =  CryptoJS.AES.encrypt(srcs,key,{
                     iv:iv,
@@ -74,7 +74,15 @@ const generateRandomID = (length:number) => {
 
     return randomID;
 }
+const fulfillZeroTill16 = (string:string) => {
 
+
+    for (let i = string.length;i < 16; i++) {
+        string = string+"0";
+    }
+    console.log(string)
+    return string;
+}
 
 </script>
 <template>
