@@ -4,12 +4,16 @@ import {FormInstance, FormRules} from "element-plus";
 import VueDrawingCanvas from "vue-drawing-canvas";
 import bgimage from "@/assets/jintaizu.jpg"
 import service from "@/webservice";
+import {getCurrentInstance} from 'vue'
+
 
 onMounted(() => {
 //setup 是围绕beforeCreate和created生命周期钩子运行的，不需要显式地定义它们。在这些钩子中编写的任何代码都应该直接在 setup 函数中编写。
 //生命周期基本都被重命名 首字母大写后加上on前缀  例如beforeUpdate => onBeforeUpdate
-
 })
+const globalProperties = getCurrentInstance().appContext.config.globalProperties;
+const headers = globalProperties.$defaultheaders
+
 let props = defineProps({
     medicalRecordShow: {
         type: Boolean,
@@ -71,10 +75,7 @@ const form = reactive({
 })
 const rules = reactive<FormRules>({});
 
-const headers = {
-    Accept: 'application/json;charset=UTF-8',
-    'Content-Type': 'application/x-www-form-urlencoded'
-}
+
 
 const canvasClick = () => {
     let canvas = instance.refs.bodyCanvas;
@@ -192,7 +193,7 @@ const saveRecord = async (formEl: FormInstance | undefined) => {
                 positions: JSON.stringify(instance.refs.bodyCanvas.getAllStrokes()),
                 modified_user_id: localStorage.getItem('userid')
             };
-            service.post('http://localhost:8080/updatemedicalrecord',
+            service.post('http://'+globalProperties.$serviceurl+'/updatemedicalrecord',
                 medicalRecorde,
                 headers).then(response => {
                 dialogVisible.value = false;

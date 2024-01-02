@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import {ref, toRefs,watch, defineProps} from "vue";
 import OrganisationSelectionTable from "@/components/Organisation/OrganisationSelectionTable.vue";
+import {getCurrentInstance} from 'vue'
 
+const globalProperties = getCurrentInstance().appContext.config.globalProperties;
+const headers = globalProperties.$defaultheaders
 let props = defineProps({
     selectOrgDialogShow: {
         type: Boolean,
@@ -24,10 +27,7 @@ const selectDialogClose = (param)=> {
     emit('selectOrganisationClosed',param);
 }
 
-const headers= {
-    Accept: 'application/json;charset=UTF-8',
-    'Content-Type': 'application/x-www-form-urlencoded'
-}
+
 
 </script>
 

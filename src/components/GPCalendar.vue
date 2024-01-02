@@ -11,6 +11,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import type { Action } from 'element-plus'
 import momentTimezonePlugin from '@fullcalendar/moment-timezone'
 import service from "@/webservice";
+import {getCurrentInstance} from 'vue'
 
 
 let updateDialogShow = ref(false);
@@ -18,6 +19,8 @@ let createDialogShow = ref(false);
 let defaultDate = ref();
 let calendar= ref(Calendar);
 let editdata = ref();
+const globalProperties = getCurrentInstance().appContext.config.globalProperties;
+const headers = globalProperties.$defaultheaders
 // calendar.addEventListener('prev', function() {
 //     console.log("prev click");
 // });
@@ -35,7 +38,7 @@ const eventUpdate = (eventUpdateInfo) =>{
         reportStatus:newEvent.extendedProps.reportStatus,
         modified_user_id: localStorage.getItem('userid')
     };
-    service.post('http://localhost:8080/updateevent',
+    service.post('http://'+globalProperties.$serviceurl+'/updateevent',
         event,
         headers)
 }
@@ -109,17 +112,14 @@ const dialogClosed = ()=>{
     createDialogShow.value = false;
     findEvent(calendar.view.currentEnd.toISOString(),calendar);
 }
-const headers = {
-    Accept: 'application/json;charset=UTF-8',
-    'Content-Type': 'application/x-www-form-urlencoded'
-}
+
 const findEvent = (current_date,calendar) => {
 
     let par = {
         "user_id": localStorage.getItem('userid'),
         "current_date":current_date.split('T')[0]
     }
-    service.get('http://localhost:8080/findeventsbyuserid',
+    service.get('http://'+ globalProperties.$serviceurl+'/findeventsbyuserid',
         par,
         headers)
         .then(response => {

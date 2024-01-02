@@ -5,11 +5,17 @@ import {FormInstance, FormRules} from "element-plus";
 import service from "@/webservice";
 import md5 from "js-md5";
 import CryptoJS from 'crypto-js';
+import {getCurrentInstance} from 'vue'
+
+const globalProperties = getCurrentInstance().appContext.config.globalProperties;
+const headers = globalProperties.$defaultheaders
+//'+globalProperties.$serviceurl+'
 const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive({
     newpassword:undefined,
     confirmnewpassword: undefined
 })
+
 const validatePass2 = () => {
     return (rule, value, callback) => {
         if (value !== ruleForm.newpassword && ruleForm.confirmnewpassword !== '') {
@@ -27,10 +33,7 @@ const rules = reactive<FormRules>({
         {required: true, message: 'Confirm password should same as "new password"', trigger: 'blur', validator: validatePass2()}
     ]
 })
-const headers= {
-    Accept: 'application/json;charset=UTF-8',
-    'Content-Type': 'application/x-www-form-urlencoded'
-}
+
 const changePassword = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
     await formEl.validate((valid, fields) => {
@@ -52,7 +55,7 @@ const changePassword = async (formEl: FormInstance | undefined) => {
                 username:username,
                 password:password
             }
-            service.post('http://localhost:8080/updatepassword',
+            service.post('http://'+globalProperties.$serviceurl+'/updatepassword',
                 user,
                 headers).then(response => {
             })

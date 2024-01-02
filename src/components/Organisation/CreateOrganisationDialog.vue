@@ -2,7 +2,10 @@
 import {reactive, ref, toRefs,watch, defineProps,watchEffect} from "vue";
 import type { FormInstance, FormRules } from 'element-plus'
 import service from "@/webservice";
+import {getCurrentInstance} from 'vue'
 
+const globalProperties = getCurrentInstance().appContext.config.globalProperties;
+const headers = globalProperties.$defaultheaders
 let props = defineProps({
     dialogShow: {
         type: Boolean,
@@ -35,10 +38,7 @@ const rules = reactive<FormRules>({
         {required: true, message: 'Please input Activity code', trigger: 'blur'}
     ]
 })
-const headers= {
-    Accept: 'application/json;charset=UTF-8',
-    'Content-Type': 'application/x-www-form-urlencoded'
-}
+
 const formSubmit = async (formEl: FormInstance | undefined)=> {
     if (!formEl) return
     await formEl.validate((valid, fields) => {
@@ -48,7 +48,7 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
                 org_code: ruleForm.code,
                 created_user_id: localStorage.getItem('userid')
             };
-            service.post('http://localhost:8080/createorg',
+            service.post('http://'+globalProperties.$serviceurl+'/createorg',
                 organisation,
                 headers).then(response => {
                 dialogVisible.value = false;

@@ -35,12 +35,17 @@ import CreateClientnDialog from '@/components/Client/CreateClientDialog.vue';
 import UpdateClientDialog from '@/components/Client/UpdateClientDialog.vue';
 import service from "@/webservice";
 import {formatDate} from "@fullcalendar/core";
+import {getCurrentInstance} from 'vue'
+
 
 onMounted(() => {
 //setup 是围绕beforeCreate和created生命周期钩子运行的，不需要显式地定义它们。在这些钩子中编写的任何代码都应该直接在 setup 函数中编写。
 //生命周期基本都被重命名 首字母大写后加上on前缀  例如beforeUpdate => onBeforeUpdate
     findData();
 })
+const globalProperties = getCurrentInstance().appContext.config.globalProperties;
+const headers = globalProperties.$defaultheaders
+
 const dataformatter = (row, column, cellValue, index) => {
     let format = 'YYYY-mm-dd'
     let date = new Date(cellValue);
@@ -107,16 +112,12 @@ const editDialogClosed = () => {
 const showCreateForm = () => {
     dialogShow.value = true;
 }
-const headers = {
-    Accept: 'application/json;charset=UTF-8',
-    'Content-Type': 'application/x-www-form-urlencoded'
-}
 const findData = () => {
 
     let par = {
         "user_id": localStorage.getItem('userid')
     }
-    service.get('http://localhost:8080/findclientsbyuserid',
+    service.get('http://'+globalProperties.$serviceurl+'/findclientsbyuserid',
         par,
         headers)
         .then(response => {

@@ -2,6 +2,10 @@
 import {ref, toRefs,watch, defineProps} from "vue";
 import ClientSelectionTable from "@/components/Client/ClientSelectionTable.vue";
 import service from "@/webservice";
+import {getCurrentInstance} from 'vue'
+
+const globalProperties = getCurrentInstance().appContext.config.globalProperties;
+const headers = globalProperties.$defaultheaders
 
 let props = defineProps({
     selectClientDialogShow: {

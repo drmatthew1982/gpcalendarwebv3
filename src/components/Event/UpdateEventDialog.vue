@@ -8,7 +8,11 @@ import moment from 'moment'
 import CreateMedicalRecordDialog from "@/components/MedicalRecord/MedicalRecordDialog.vue";
 import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 //import UpdateEventDialog from "@/components/Event/UpdateEventDialog.vue";
+import {getCurrentInstance} from 'vue'
 
+const globalProperties = getCurrentInstance().appContext.config.globalProperties;
+const headers = globalProperties.$defaultheaders
+//
 let props = defineProps({
     updateDialogShow: {
         type: Boolean,
@@ -145,10 +149,6 @@ const selectOrganisationClosed = (param)=> {
     form.org_show_value = param.org_code+"-"+param.org_name;
     selectOrgDialogShow.value = false;
 }
-const headers= {
-    Accept: 'application/json;charset=UTF-8',
-    'Content-Type': 'application/x-www-form-urlencoded'
-}
 const getStartDisableDate =(date)=>{
     if(!form.sameDayEvent){
         return date>new Date(form.eventEndDate);
@@ -190,7 +190,7 @@ const findData = (eventid) => {
     let par = {
         "event_id":eventid
     }
-    service.get('http://localhost:8080/findmedicalrecordbyeventid',
+    service.get('http://'+globalProperties.$serviceurl+'findmedicalrecordbyeventid',
         par,
         headers)
         .then(response => {
@@ -216,7 +216,7 @@ const formSubmit = async (formEl: FormInstance | undefined)=> {
                 reportStatus:form.reportStatus,
                 modified_user_id: localStorage.getItem('userid')
             };
-            service.post('http://localhost:8080/updateevent',
+            service.post('http://'+globalProperties.$serviceurl+'/updateevent',
                 event,
                 headers).then(response => {
                 dialogVisible.value = false;

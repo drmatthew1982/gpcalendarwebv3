@@ -2,6 +2,10 @@
 import {reactive, ref, toRefs,watch, defineProps,watchEffect} from "vue";
 import service from "@/webservice";
 import {FormInstance, FormRules} from "element-plus";
+import {getCurrentInstance} from 'vue'
+
+const globalProperties = getCurrentInstance().appContext.config.globalProperties;
+const headers = globalProperties.$defaultheaders
 
 let props = defineProps({
     dialogShow: {
@@ -57,10 +61,7 @@ const rules = reactive<FormRules>({
         {required: true, message: 'Please input Activity id', trigger: 'blur'}
     ]
 })
-const headers= {
-    Accept: 'application/json;charset=UTF-8',
-    'Content-Type': 'application/x-www-form-urlencoded'
-}
+
 const formSubmit = ()=> {
     let client = {
         firstname: ruleForm.firstname,
@@ -72,7 +73,7 @@ const formSubmit = ()=> {
         created_user_id: localStorage.getItem('userid'),
         id:ruleForm.id
     };
-    service.post('http://localhost:8080/updateevent',
+    service.post('http://'+globalProperties.$serviceurl+'/updateevent',
         client,
         headers).then(response=> {
         dialogVisible.value = false;

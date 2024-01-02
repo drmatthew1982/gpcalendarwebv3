@@ -28,12 +28,16 @@ import {onMounted, reactive, ref} from "vue";
 import CreateOrginsationDialog from '@/components/Organisation/CreateOrganisationDialog.vue';
 import UpdateOrginsationDialog from '@/components/Organisation/UpdateOrganisationDialog.vue';
 import service from "@/webservice";
+import {getCurrentInstance} from 'vue'
+
+
 onMounted(()=> {
 //setup 是围绕beforeCreate和created生命周期钩子运行的，不需要显式地定义它们。在这些钩子中编写的任何代码都应该直接在 setup 函数中编写。
 //生命周期基本都被重命名 首字母大写后加上on前缀  例如beforeUpdate => onBeforeUpdate
     findData();
 })
-
+const globalProperties = getCurrentInstance().appContext.config.globalProperties;
+const headers = globalProperties.$defaultheaders
 let dialogShow = ref(false);
 let editDialogShow = ref(false);
 
@@ -64,15 +68,12 @@ const editDialogClosed = ()=>{
 const showCreateForm = () => {
     dialogShow.value = true;
 }
-const headers= {
-    Accept: 'application/json;charset=UTF-8',
-    'Content-Type': 'application/x-www-form-urlencoded'
-}
+
 const findData =  ()=> {
     let organisation = {
         created_user_id:localStorage.getItem('userid')
     };
-    service.get('http://localhost:8080/findorgbyuserid',
+    service.get('http://'+globalProperties.$serviceurl+'/findorgbyuserid',
         organisation,
         headers).then(response=> {
         tableData.arr=response.data;
