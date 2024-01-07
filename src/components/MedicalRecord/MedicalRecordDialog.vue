@@ -4,7 +4,6 @@ import {FormInstance, FormRules} from "element-plus";
 import VueDrawingCanvas from "vue-drawing-canvas";
 import bgimage from "@/assets/jintaizu.jpg"
 import service from "@/webservice";
-import {getCurrentInstance} from 'vue'
 
 
 onMounted(() => {

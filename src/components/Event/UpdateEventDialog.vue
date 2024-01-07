@@ -190,7 +190,7 @@ const findData = (eventid) => {
     let par = {
         "event_id":eventid
     }
-    service.get('http://'+globalProperties.$serviceurl+'findmedicalrecordbyeventid',
+    service.get('http://'+globalProperties.$serviceurl+'/findmedicalrecordbyeventid',
         par,
         headers)
         .then(response => {
