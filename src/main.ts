@@ -21,5 +21,6 @@ app.config.globalProperties.$api = api;
 app.config.globalProperties.$serviceurl = "localhost:8080";
 app.config.globalProperties.$defaultheaders = {
     Accept: 'application/json;charset=UTF-8',
-    'Content-Type': 'application/x-www-form-urlencoded'
+    //ContentType: 'application/json',
+    'Content-Type': 'application/json'
 };
