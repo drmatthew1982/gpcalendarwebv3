@@ -71,7 +71,7 @@ const formSubmit = ()=> {
             <el-form-item label="Organisation name" :label-width="formLabelWidth" prop="name">
                 <el-input v-model="ruleform.name" autocomplete="off" />
             </el-form-item>
-            <el-form-item label="ruleform code" :label-width="formLabelWidth" prop="code">
+            <el-form-item label="Organisation code" :label-width="formLabelWidth" prop="code">
                 <el-input v-model="ruleform.code" autocomplete="off" disabled />
             </el-form-item>
         </el-form>

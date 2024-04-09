@@ -26,8 +26,10 @@ const instance = getCurrentInstance()
 const refProps = toRefs(props)
 
 let dialogVisible = ref(props.medicalRecordShow);
+
 let record_id = ref("")
 let initialImage = ref([])
+let drawmodel=ref('Draw')
 let eraser = ref(false);
 let color=ref("#000000");
 let strokeType=ref("dash");
@@ -182,6 +184,22 @@ const canvasClick = () => {
 
     }
 }
+const modelchange= () => {
+
+    if(drawmodel.value =='Draw'){
+        eraser.value = false;
+        lock.value = false;
+    }
+    if(drawmodel.value =='Eraser'){
+        eraser.value = true;
+        lock.value = false;
+
+    }
+    if(drawmodel.value =='Click'){
+        eraser.value = false;
+        lock.value = true;
+    }
+}
 const saveRecord = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
     await formEl.validate((valid, fields) => {
@@ -243,16 +261,23 @@ const saveRecord = async (formEl: FormInstance | undefined) => {
                                         @click=canvasClick(event)
                                         />
                     <!--:lock="disabled"-->
-                    <el-switch v-model="eraser"
-                               active-text="Eraser"
-                               inactive-text="Draw"
-                               style="--el-switch-off-color: #13ce66; --el-switch-on-color: #ff4949"
-                    />
-                    <el-text class="mx-1">  |  Color:</el-text>
-                    <el-color-picker v-model="color" />
+                    <el-radio-group v-model="drawmodel"  @change=modelchange()>
+                        <!--Vue3 has bug here ,v-model did not get value forn value but Label-->
+                        <el-radio-button label="Draw" value="Draw" />
+                        <el-radio-button label="Click" value="Click" />
+                        <el-radio-button label="Eraser" value="Eraser"  />
+                    </el-radio-group>
+<!--                    <el-switch v-model="eraser"-->
+<!--                               active-text="Eraser"-->
+<!--                               inactive-text="Draw"-->
+<!--                               style="&#45;&#45;el-switch-off-color: #13ce66; &#45;&#45;el-switch-on-color: #ff4949"-->
+<!--                    />-->
+                    <br/>
+                    <el-text class="mx-1">  Color:</el-text>
+                    <el-color-picker v-model="color"  :disabled="eraser"/>
                     <br/>
                     <el-text class="mx-1">Line width:</el-text>
-                    <select v-model="lineWidth">
+                    <select v-model="lineWidth" :disabled="eraser">
                         <option v-for="n in 25" :key="'option-' + n" :value="n">{{ n }}</option>
                     </select>
                     <br/>
@@ -263,13 +288,14 @@ const saveRecord = async (formEl: FormInstance | undefined) => {
                         placeholder="Please select"
                         style="width: 150px"
                         size="small"
+                        :disabled="eraser || lock"
                     />
                     <br/>
-                    <el-text>Mode Selection: </el-text>
-                    <el-switch v-model="lock"
-                               active-text="Click Mode"
-                               inactive-text="Draw Mode"
-                    />
+<!--                    <el-text>Mode Selection: </el-text>-->
+<!--                    <el-switch v-model="lock"-->
+<!--                               active-text="Click Mode"-->
+<!--                               inactive-text="Draw Mode"-->
+<!--                    />-->
                     <br/>
                     <el-text>Click Mode: </el-text>
                     <el-select-v2
@@ -278,6 +304,7 @@ const saveRecord = async (formEl: FormInstance | undefined) => {
                         placeholder="Please select"
                         style="width: 150px"
                         size="small"
+                        :disabled="!lock"
                     />
                 </el-col>
             </el-row>
