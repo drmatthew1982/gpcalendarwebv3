@@ -73,7 +73,7 @@ const formSubmit = ()=> {
         created_user_id: localStorage.getItem('userid'),
         id:ruleForm.id
     };
-    service.post('http://'+globalProperties.$serviceurl+'/updateevent',
+    service.post('http://'+globalProperties.$serviceurl+'/updateclient',
         client,
         headers).then(response=> {
         dialogVisible.value = false;

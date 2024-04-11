@@ -47,6 +47,9 @@ const globalProperties = getCurrentInstance().appContext.config.globalProperties
 const headers = globalProperties.$defaultheaders
 
 const dataformatter = (row, column, cellValue, index) => {
+    if(cellValue==null){
+        return "";
+    }
     let format = 'YYYY-mm-dd'
     let date = new Date(cellValue);
     const dataItem = {
