@@ -53,7 +53,7 @@ watch(refProps.editdata, (val, old) => {
     form.org_id = val.extendedProps.org_id,
     form.org_code = val.extendedProps.org_code,
     form.org_name = val.extendedProps.org_name,
-    form.org_show_value = val.extendedProps.org_code + val.extendedProps.org_name;
+    form.org_show_value = val.extendedProps.org_code + "-" + val.extendedProps.org_name;
     if(form.client_middle_name !=null){
         form.client_show_value = form.client_id_no +": "+ form.client_first_name+" "+form.client_middle_name+ " "+form.client_last_name;
     }else{
