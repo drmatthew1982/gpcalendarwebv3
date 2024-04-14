@@ -16,6 +16,7 @@ import {getCurrentInstance} from 'vue'
 
 let updateDialogShow = ref(false);
 let createDialogShow = ref(false);
+const componentKey = ref(0);
 let defaultDate = ref();
 let calendar= ref(Calendar);
 let editdata = ref();
@@ -91,9 +92,11 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         eventDrop: function(eventDropInfo) {
             eventUpdate(eventDropInfo);
+            findEvent(calendar.view.currentEnd.toISOString(),calendar);
         },
         eventResize: function(eventResizeInfo) {
             eventUpdate(eventResizeInfo);
+            findEvent(calendar.view.currentEnd.toISOString(),calendar);
          },
         // events:
         //     [
@@ -111,6 +114,7 @@ const dialogClosed = ()=>{
     updateDialogShow.value = false;
     createDialogShow.value = false;
     findEvent(calendar.view.currentEnd.toISOString(),calendar);
+    componentKey.value += 1;
 }
 
 const findEvent = (current_date,calendar) => {
@@ -140,7 +144,7 @@ const findEvent = (current_date,calendar) => {
 
         </div>
         <CreateEventDialog :createDialogShow="createDialogShow" :defaultDate="defaultDate" @dialogClosed="dialogClosed"/>
-        <UpdateEventDialog :updateDialogShow="updateDialogShow" :editdata ="editdata" @dialogClosed="dialogClosed"/>
+        <UpdateEventDialog :updateDialogShow="updateDialogShow" :editdata ="editdata"  :key="componentKey" @dialogClosed="dialogClosed"/>
     </div>
 </template>
 
