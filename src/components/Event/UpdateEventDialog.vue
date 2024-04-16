@@ -194,7 +194,7 @@ const findData = (eventid) => {
         par,
         headers)
         .then(response => {
-            m_record= response.data[0];
+            m_record = response.data[0];
             medicalRecordShow.value = true;
         })
 }

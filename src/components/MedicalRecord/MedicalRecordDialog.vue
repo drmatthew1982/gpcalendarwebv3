@@ -27,9 +27,9 @@ const refProps = toRefs(props)
 
 let dialogVisible = ref(props.medicalRecordShow);
 
-let record_id = ref("")
-let initialImage = ref([])
-let drawmodel=ref('Draw')
+let record_id = ref("");
+let initialImage = ref([]);
+let drawmodel=ref('Draw');
 let eraser = ref(false);
 let color=ref("#000000");
 let strokeType=ref("dash");
@@ -60,8 +60,8 @@ watch(refProps.medicalRecordShow, (val, old) => {
     dialogVisible.value = val
 }, {deep: true})//监听修改本地
 watch(refProps.m_record, (val, old) => {
-    record_id = val.id,
-        form.summary = val.summary
+    record_id = val.id;
+    form.summary = val.summary;
     initialImage = JSON.parse(val.positions)
 }, {deep: true})//监听修改本地
 const emit = defineEmits(['dialogClosed'])
