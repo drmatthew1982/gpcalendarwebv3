@@ -86,6 +86,7 @@ const fulfillZeroTill16 = (string:string) => {
 
 </script>
 <template>
+    <el-text class="mx-1" size="large" type="warning">This function is not workable for "tester"</el-text>
     <el-form
             ref="ruleFormRef"
             label-position="left"
