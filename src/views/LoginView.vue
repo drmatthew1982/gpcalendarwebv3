@@ -94,8 +94,10 @@ import { ElMessage } from "element-plus";
 import { useRouter } from 'vue-router';
 import service from '@/webservice'
 import md5 from "js-md5";
+import {getCurrentInstance} from "vue";
 export default {
     setup() {
+        const globalProperties = getCurrentInstance().appContext.config.globalProperties;
         const form = reactive({
             loginname: "",
             loginpassword: "",
@@ -119,12 +121,12 @@ export default {
             let securekey = '111';
             let params = new URLSearchParams();
             params.append("username",form.loginname);
-             service.post('http://localhost:8080/getSecKey',
+             service.post('http://'+globalProperties.$serviceurl+'/getSecKey',
                  params,
                  headers).then(response=> {
                  securekey=response.data[0]
                  params.append("password",md5(md5(form.loginpassword+form.loginname)+securekey));
-                 let obj = service.post('http://localhost:8080/logincheck',
+                 let obj = service.post('http://'+globalProperties.$serviceurl+'/logincheck',
                      params,
                      headers).then(response=> {
                      if (response.data.length > 0) {
