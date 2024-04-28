@@ -86,6 +86,31 @@
                 </el-form>
             </el-tab-pane>-->
         </el-tabs>
+        <br/>
+        <el-text class="mx-1" size="large" type="warning">For guests/vistors</el-text>
+        <br/>
+        <el-text class="mx-1" size="large" type="warning">Please use follow information login</el-text>
+        <br/>
+        <br/>
+        <el-text class="mx-1" size="large" >Username: tester</el-text>
+        <br/>
+        <el-text class="mx-1" size="large" >Password: retset</el-text>
+        <br/>
+        <br/>
+        <el-text class="mx-1" size="large" type="warning">This project still in MVP phase,</el-text>
+        <el-text class="mx-1" size="large" type="warning">so this is a simple and vulnerable playground.</el-text>
+        <br/>
+        <el-text class="mx-1" size="large" type="warning">But please kindly and avoid play tricky and evil on it</el-text>
+        <br/>
+        <el-text class="mx-1" size="large" type="warning">(If you like, you can have you own account if you contact me, but almost no different than "tester" )</el-text>
+        <br/>
+        <br/>
+        <el-text class="mx-1" size="large">And if you have any job opportunity</el-text>
+        <br/>
+        <el-text class="mx-1" size="large">Please contact me at LinkedIn, many thanks</el-text>
+        <br/>
+        <br/>
+        <el-text class="mx-1" size="large"><a href="https://www.linkedin.com/in/matthew-zhu-nz/" target="_blank">https://www.linkedin.com/in/matthew-zhu-nz/</a></el-text>
     </div>
 </template>
 <script>
