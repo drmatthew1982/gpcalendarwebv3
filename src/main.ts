@@ -18,7 +18,7 @@ app.use(router)
 app.use(ElementPlus)
 app.mount('#app')
 app.config.globalProperties.$api = api;
-app.config.globalProperties.$serviceurl = "localhost:8080";
+app.config.globalProperties.$serviceurl = "localhost:8080";// "drmatthew1982.serv00.net:8282";
 app.config.globalProperties.$defaultheaders = {
     Accept: 'application/json;charset=UTF-8',
     //ContentType: 'application/json',
