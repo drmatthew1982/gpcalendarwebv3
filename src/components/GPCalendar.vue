@@ -41,7 +41,11 @@ const eventUpdate = (eventUpdateInfo) =>{
     };
     service.post('http://'+globalProperties.$serviceurl+'/updateevent',
         event,
-        headers)
+        headers).then(
+        response => {
+            findEvent(calendar.view.currentEnd.toISOString(),calendar);
+        }
+    );
 }
 let events=[];
 document.addEventListener('DOMContentLoaded', function() {
@@ -92,11 +96,11 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         eventDrop: function(eventDropInfo) {
             eventUpdate(eventDropInfo);
-            findEvent(calendar.view.currentEnd.toISOString(),calendar);
+            //findEvent(calendar.view.currentEnd.toISOString(),calendar);
         },
         eventResize: function(eventResizeInfo) {
             eventUpdate(eventResizeInfo);
-            findEvent(calendar.view.currentEnd.toISOString(),calendar);
+            //findEvent(calendar.view.currentEnd.toISOString(),calendar);
          },
         // events:
         //     [
